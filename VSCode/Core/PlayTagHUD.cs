@@ -40,17 +40,17 @@ namespace TFModFortRiseGameModePlaytag
 
     public override void Render() 
     {
-      if (player.playTagCountDown <= 0)
+      if (MyPlayer.playTagCountDown[player.PlayerIndex] <= 0)
       { // Yes I know, it's so bad to put that here ...
         foreach (Player p in player.Level.Session.CurrentLevel[GameTags.Player])
         {
-          p.playTagCountDownOn = false;
+          MyPlayer.playTagCountDownOn[p.PlayerIndex] = false;
         }
         Player.ShootLock = false;
         Explosion.SpawnSuper(player.Level, player.Position, player.PlayerIndex, true);
       }
 
-      Draw.OutlineTextCentered(TFGame.Font, player.playTagCountDown.ToString(), Calc.Floor(player.Position + new Vector2(0f, -15f)), triggerColor, new Vector2(1f, 1f));
+      Draw.OutlineTextCentered(TFGame.Font, MyPlayer.playTagCountDown[player.PlayerIndex].ToString(), Calc.Floor(player.Position + new Vector2(0f, -15f)), triggerColor, new Vector2(1f, 1f));
     }
   }
 }

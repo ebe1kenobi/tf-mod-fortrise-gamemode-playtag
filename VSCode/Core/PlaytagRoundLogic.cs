@@ -10,8 +10,7 @@ using Microsoft.Xna.Framework;
 
 namespace TFModFortRiseGameModePlaytag
 {
-  [CustomRoundLogic("PlaytagRoundLogic")]
-  internal class PlaytagRoundLogic : CustomVersusRoundLogic
+  internal class PlaytagRoundLogic : RoundLogic
   {
     private RoundEndCounter roundEndCounter;
     private bool done;
@@ -20,19 +19,19 @@ namespace TFModFortRiseGameModePlaytag
     private static int lastNumberOfPlayer = 0;
 
 
-    public static RoundLogicInfo Create()
-    {
-      //private static IDetour hook_GetDodgeExitState;
+    //public static RoundLogicInfo Create()
+    //{
+    //  //private static IDetour hook_GetDodgeExitState;
 
 
-      return new RoundLogicInfo
-      {
-        Name = "Playtag",
-        Icon = TFGame.MenuAtlas["gameModes/warlord"],
-        //Icon = TFModFortRiseGameModePlaytagModule.RespawnAtlas["gamemodes/respawn"], //TODO
-        RoundType = RoundLogicType.HeadHunters
-      };
-    }
+    //  return new RoundLogicInfo
+    //  {
+    //    Name = "Playtag",
+    //    Icon = TFGame.MenuAtlas["gameModes/warlord"],
+    //    //Icon = TFModFortRiseGameModePlaytagModule.RespawnAtlas["gamemodes/respawn"], //TODO
+    //    RoundType = RoundLogicType.HeadHunters
+    //  };
+    //}
     internal static void Load()
     {
       On.TowerFall.RoundLogic.FFACheckForAllButOneDead += FFACheckForAllButOneDead_patch;
@@ -142,17 +141,17 @@ namespace TFModFortRiseGameModePlaytag
     {
       base.OnPlayerDeath(player, corpse, playerIndex, deathType, position, killerIndex);
 
-      //if (player.playTag)
-      //{
-      //  this.Session.CurrentLevel.Ending = true;
-      //  return;
-      //}
+      if (MyPlayer.playTag[player.PlayerIndex])
+      {
+        this.Session.CurrentLevel.Ending = true;
+        return;
+      }
 
-      //if (!player.playTagCountDownOn)
-      //{
-      //  this.Session.CurrentLevel.Ending = true;
-      //  return;
-      //}
+      if (!MyPlayer.playTagCountDownOn[player.PlayerIndex])
+      {
+        this.Session.CurrentLevel.Ending = true;
+        return;
+      }
 
       if (this.Session.CurrentLevel.LivingPlayers == 1)
       {
@@ -174,18 +173,23 @@ namespace TFModFortRiseGameModePlaytag
 
     public void initPlayTag(int playerIndex)
     {
+      //todo log p.PlayerIndex
+      //Logger.Init("ttttttttttttttttttttttttttinitPlayTag");
+      //Logger.Info("initPlayTag" + playerIndex);
+      //Logger.Info("initPlayTagCount" + MyPlayer.playTag.Count);
+      //Logger.Info("initPlayTagToList" + MyPlayer.playTag.ToList());
       Player.ShootLock = true;
       foreach (Player p in this.Session.CurrentLevel.Players)
       {
-        //  p.playTagCountDown = p.playTagDelayModePlayTag;
-        //  p.playTagCountDownOn = true;
-        //  p.playTag = false;
-        //  p.creationTime = DateTime.Now;
+        MyPlayer.playTagCountDown[p.PlayerIndex] = MyPlayer.playTagDelayModePlayTag[p.PlayerIndex];
+        MyPlayer.playTagCountDownOn[p.PlayerIndex] = true;
+        MyPlayer.playTag[p.PlayerIndex] = false;
+        MyPlayer.creationTime[p.PlayerIndex] = DateTime.Now;
 
-        //  if (p.PlayerIndex == playerIndex)
-        //  {
-        //    p.playTag = true;
-        //  }
+        if (p.PlayerIndex == playerIndex)
+        {
+          MyPlayer.playTag[p.PlayerIndex] = true;
+        }
       }
     }
 

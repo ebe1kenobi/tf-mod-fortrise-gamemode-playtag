@@ -32,11 +32,13 @@ namespace TFModFortRiseGameModePlaytag
 
     public override void Load()
     {
+      MyPlayer.Load();
       PlaytagRoundLogic.Load();
     }
 
     public override void Unload()
     {
+      MyPlayer.Unload();
       PlaytagRoundLogic.Unload();
     }
   }
