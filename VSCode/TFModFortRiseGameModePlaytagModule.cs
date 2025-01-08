@@ -23,6 +23,7 @@ namespace TFModFortRiseGameModePlaytag
     public TFModFortRiseGameModePlaytagModule() 
     {
         Instance = this;
+        Logger.Init("PlaytagLOG");
     }
 
     public override void LoadContent()
@@ -34,12 +35,18 @@ namespace TFModFortRiseGameModePlaytag
     {
       MyPlayer.Load();
       PlaytagRoundLogic.Load();
+      MyTreasureSpawner.Load();
+      MyPickup.Load();
+      MyPauseMenu.Load();
     }
 
     public override void Unload()
     {
       MyPlayer.Unload();
       PlaytagRoundLogic.Unload();
+      MyTreasureSpawner.Unload();
+      MyPickup.Unload();
+      MyPauseMenu.Unload();
     }
   }
 }

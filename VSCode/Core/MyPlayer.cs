@@ -67,8 +67,8 @@ namespace TFModFortRiseGameModePlaytag
     }
 
     public static void ctor_patch(On.TowerFall.Player.orig_ctor orig, TowerFall.Player self, int playerIndex, Vector2 position, Allegiance allegiance, Allegiance teamColor, global::TowerFall.PlayerInventory inventory, global::TowerFall.Player.HatStates hatState, bool frozen, bool flash, bool indicator) {
-      Logger.Init("ttttttttttttttttttttttttttctor_patch");
-      Logger.Info("ctor_patch" + playerIndex);
+      //Logger.Init("ttttttttttttttttttttttttttctor_patch");
+      //Logger.Info("ctor_patch" + playerIndex);
       //todo log playerindex, est-Center que le code est  appelé ?
       orig(self, playerIndex, position, allegiance, teamColor, inventory, hatState, frozen, flash, indicator);
       MyPlayer.PlayTagHUD[playerIndex] = new PlayTagHUD();
@@ -151,14 +151,14 @@ namespace TFModFortRiseGameModePlaytag
       //  Logger.Info("MyPlayer.playTagCountDownOn " + false);
       //}
       //if (!MyPlayer.playTagCountDownOn[self.PlayerIndex] && self.Level.Session.MatchSettings.Mode != Modes.PlayTag)
-      if (!MyPlayer.playTagCountDownOn[self.PlayerIndex] && self.Level.Session.MatchSettings.Mode != ModRegisters.GameModeType<TFModFortRiseGameModePlaytag.PlaytagGameMode>())
+      if (!MyPlayer.playTagCountDownOn[self.PlayerIndex] && self.Level.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlaytagGameMode>())
       {
         //  //hide arrow
         orig(self, wrapped);
       }
 
       //// Active the arrows just after the explosion in case the tag is a survivor
-      if (self.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<TFModFortRiseGameModePlaytag.PlaytagGameMode>() && !MyPlayer.playTagCountDownOn[self.PlayerIndex] 
+      if (self.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlaytagGameMode>() && !MyPlayer.playTagCountDownOn[self.PlayerIndex] 
       //if (self.Level.Session.MatchSettings.Mode == Modes.PlayTag && !MyPlayer.playTagCountDownOn[self.PlayerIndex] 
           && MyPlayer.previousPlayTagCountDown[self.PlayerIndex] > MyPlayer.playTagCountDown[self.PlayerIndex])
       {
@@ -195,17 +195,17 @@ namespace TFModFortRiseGameModePlaytag
     public static void Update(On.TowerFall.Player.orig_Update orig, global::TowerFall.Player self)
     //public override void Update()
     {
-      Logger.Info("Update PlayerIndex = " + self.PlayerIndex);
+      //Logger.Info("Update PlayerIndex = " + self.PlayerIndex);
       orig(self);
       //base.Update();
-      Logger.Info("MyPlayer.playTagCountDownOn[PlayerIndex] : " + MyPlayer.playTagCountDownOn[self.PlayerIndex]);
+      //Logger.Info("MyPlayer.playTagCountDownOn[PlayerIndex] : " + MyPlayer.playTagCountDownOn[self.PlayerIndex]);
       if (MyPlayer.playTagCountDownOn[self.PlayerIndex])
       {
-        Logger.Info("true");
+        //Logger.Info("true");
         self.Aiming = false; 
         int delay;
         //if (this.Level.Session.MatchSettings.Mode == Modes.PlayTag) {
-        if (self.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<TFModFortRiseGameModePlaytag.PlaytagGameMode>()) {
+        if (self.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlaytagGameMode>()) {
           delay = MyPlayer.playTagDelayModePlayTag[self.PlayerIndex];
         } else {
           delay = MyPlayer.playTagDelay[self.PlayerIndex];
@@ -213,8 +213,7 @@ namespace TFModFortRiseGameModePlaytag
         MyPlayer.previousPlayTagCountDown[self.PlayerIndex] = MyPlayer.playTagCountDown[self.PlayerIndex];
         MyPlayer.playTagCountDown[self.PlayerIndex] = delay - (int)(DateTime.Now - MyPlayer.creationTime[self.PlayerIndex]).TotalSeconds + MyPlayer.pauseDuration[self.PlayerIndex];
       } else {
-        Logger.Info("false");
-
+        //Logger.Info("false");
       }
     }
 
