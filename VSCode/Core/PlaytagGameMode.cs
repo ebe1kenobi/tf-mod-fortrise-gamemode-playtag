@@ -4,7 +4,7 @@ using TowerFall;
 
 namespace TFModFortRiseGameModePlaytag
 {
-  public class PlaytagGameMode : CustomGameMode
+  public class PlayTag : CustomGameMode
   {
     public override void StartGame(Session session)
     {

@@ -8,7 +8,7 @@ using FortRise;
 namespace TFModFortRiseGameModePlaytag
 {
 
-  public class PlayTag : Pickup
+  public class PlayTagPickup : Pickup
   {
     public static int countPlayTagPickup = 0;
     public Pickup realPickup;
@@ -19,6 +19,7 @@ namespace TFModFortRiseGameModePlaytag
     public Image image;
     public Image border;
     public Pickups playTagType;
+    public Counter pauseCounter;
     public static List<Pickups> realPickupPossibleList = new List<Pickups> {
                                   Pickups.Arrows,
                                   Pickups.BombArrows,
@@ -48,11 +49,11 @@ namespace TFModFortRiseGameModePlaytag
     //  Calc.HexToColor("FFFFFF")
     //};
 
-    public PlayTag(Vector2 position, Vector2 targetPosition, Pickups pickupType)
+    public PlayTagPickup(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition)
     {
       playTagType = pickupType;
-      PlayTag.countPlayTagPickup++;
+      PlayTagPickup.countPlayTagPickup++;
       Logger.Info("PlayTag ctor type=" + playTagType);
 
       //switch (playTagType)
@@ -316,7 +317,7 @@ namespace TFModFortRiseGameModePlaytag
       if (MyPlayer.playTag[player.PlayerIndex])
         return;
       startPlayTag(player);
-      Sounds.boss_humanLaugh.Play(player.X);
+      //Sounds.boss_humanLaugh.Play(player.X);
       this.RemoveSelf();
     }
 
@@ -365,8 +366,9 @@ namespace TFModFortRiseGameModePlaytag
         return;
       }
       Player.ShootLock = true;
+      MyPlayer.playTagCountDown[player.PlayerIndex] = TFModFortRiseGameModePlaytagModule.Settings.playTagDelayPickup;
 
-      MyPlayer.playTagCountDown[player.PlayerIndex] = MyPlayer.playTagDelay[player.PlayerIndex];
+      //MyPlayer.playTagCountDown[player.PlayerIndex] = MyPlayer.playTagDelay[player.PlayerIndex];
       MyPlayer.playTag[player.PlayerIndex] = true;
       MyPlayer.creationTime[player.PlayerIndex] = DateTime.Now;
       MyPlayer.pauseDuration[player.PlayerIndex] = 0;
@@ -377,6 +379,9 @@ namespace TFModFortRiseGameModePlaytag
         {
           MyPlayer.playTagCountDownOn[p.PlayerIndex] = true;
         }
+        MySession.NbPlayTagPickupActivated++;
+
+        TFModFortRiseGameModePlaytagModule.StartPlayTagEffect(player);
       }
     }
 
@@ -389,7 +394,7 @@ namespace TFModFortRiseGameModePlaytag
   }
 
   [CustomPickup("PlayTagArrows", "0.0")]
-  public class PlayTagArrows : PlayTag
+  public class PlayTagArrows : PlayTagPickup
   {
     public PlayTagArrows(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -425,7 +430,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagBombArrows", "0.0")]
-  public class PlayTagBombArrows : PlayTag
+  public class PlayTagBombArrows : PlayTagPickup
   {
     public PlayTagBombArrows(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -442,7 +447,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagSuperBombArrows", "0.0")]
-  public class PlayTagSuperBombArrows : PlayTag
+  public class PlayTagSuperBombArrows : PlayTagPickup
   {
     public PlayTagSuperBombArrows(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -459,7 +464,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagLaserArrows", "0.0")]
-  public class PlayTagLaserArrows : PlayTag
+  public class PlayTagLaserArrows : PlayTagPickup
   {
     public PlayTagLaserArrows(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -476,7 +481,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagBrambleArrows", "0.0")]
-  public class PlayTagBrambleArrows : PlayTag
+  public class PlayTagBrambleArrows : PlayTagPickup
   {
     public PlayTagBrambleArrows(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -490,7 +495,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagDrillArrows", "0.0")]
-  public class PlayTagDrillArrows : PlayTag
+  public class PlayTagDrillArrows : PlayTagPickup
   {
     public PlayTagDrillArrows(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -504,7 +509,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagBoltArrows", "0.0")]
-  public class PlayTagBoltArrows : PlayTag
+  public class PlayTagBoltArrows : PlayTagPickup
   {
     public PlayTagBoltArrows(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -521,7 +526,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagFeatherArrows", "0.0")]
-  public class PlayTagFeatherArrows : PlayTag
+  public class PlayTagFeatherArrows : PlayTagPickup
   {
     public PlayTagFeatherArrows(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -536,7 +541,7 @@ namespace TFModFortRiseGameModePlaytag
   }
 
   [CustomPickup("PlayTagTriggerArrows", "0.0")]
-  public class PlayTagTriggerArrows : PlayTag
+  public class PlayTagTriggerArrows : PlayTagPickup
   {
     public PlayTagTriggerArrows(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -551,7 +556,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagPrismArrows", "0.0")]
-  public class PlayTagPrismArrows : PlayTag
+  public class PlayTagPrismArrows : PlayTagPickup
   {
     public PlayTagPrismArrows(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -566,7 +571,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagShield", "0.0")]
-  public class PlayTagShield : PlayTag
+  public class PlayTagShield : PlayTagPickup
   {
     public PlayTagShield(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -617,7 +622,7 @@ namespace TFModFortRiseGameModePlaytag
   }
 
   [CustomPickup("PlayTagWings", "0.0")]
-  public class PlayTagWings : PlayTag
+  public class PlayTagWings : PlayTagPickup
   {
     public PlayTagWings(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -659,7 +664,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagSpeedBoots", "0.0")]
-  public class PlayTagSpeedBoots : PlayTag
+  public class PlayTagSpeedBoots : PlayTagPickup
   {
     public PlayTagSpeedBoots(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -700,7 +705,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagMirror", "0.0")]
-  public class PlayTagMirror : PlayTag
+  public class PlayTagMirror : PlayTagPickup
   {
     public PlayTagMirror(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -737,7 +742,7 @@ namespace TFModFortRiseGameModePlaytag
   }
 
   [CustomPickup("PlayTagTimeOrb", "0.0")]
-  public class PlayTagTimeOrb : PlayTag
+  public class PlayTagTimeOrb : PlayTagPickup
   {
     public PlayTagTimeOrb(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -788,7 +793,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagDarkOrb", "0.0")]
-  public class PlayTagDarkOrb : PlayTag
+  public class PlayTagDarkOrb : PlayTagPickup
   {
     public PlayTagDarkOrb(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -839,7 +844,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagLavaOrb", "0.0")]
-  public class PlayTagLavaOrb : PlayTag
+  public class PlayTagLavaOrb : PlayTagPickup
   {
     public PlayTagLavaOrb(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)
@@ -890,7 +895,7 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
   [CustomPickup("PlayTagSpaceOrb", "0.0")]
-  public class PlayTagSpaceOrb : PlayTag
+  public class PlayTagSpaceOrb : PlayTagPickup
   {
     public PlayTagSpaceOrb(Vector2 position, Vector2 targetPosition, Pickups pickupType)
       : base(position, targetPosition, pickupType)

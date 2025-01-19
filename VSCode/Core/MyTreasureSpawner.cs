@@ -15,7 +15,7 @@ namespace TFModFortRiseGameModePlaytag
     //public const float DEFAULT_ARROW_CHANCE = 0.6f;
     //public static readonly float[] DefaultTreasureChances = new float[20]; 
     //public static readonly int[] FullTreasureMask = new int[20];  
-    public static bool IsPlayTagSpawn = false;
+    //public static bool IsPlayTagSpawn = false;
     public static List<Pickups> listPickupArrow = new List<Pickups>();
     public static List<Pickups> listPickupReplacement = new List<Pickups>();
 
@@ -120,9 +120,14 @@ namespace TFModFortRiseGameModePlaytag
     {
       List<TreasureChest> chestSpawnsForLevel = orig(self,chestPositions, bigChestPositions);
 
-      Logger.Info("GetChestSpawnsForLevel_patch");
+      Logger.Info("GetChestSpawnsForLevel_patch MySession.NbPlayTagPickupActivated = " + MySession.NbPlayTagPickupActivated);
 
-      if (!IsPlayTagSpawn && chestSpawnsForLevel.Count > 0 && self.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlaytagGameMode>())
+      if (
+          //!IsPlayTagSpawn && 
+          TFModFortRiseGameModePlaytagModule.Settings.playTagPickupActivated
+          && chestSpawnsForLevel.Count > 0 
+          && MySession.NbPlayTagPickupActivated == 0
+          && self.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlayTag>())
       {
         Logger.Info("GetChestSpawnsForLevel_patch ok in if chestSpawnsForLevel");
 
@@ -135,18 +140,18 @@ namespace TFModFortRiseGameModePlaytag
           Logger.Info("GetChestSpawnsForLevel_patch pickups?count =" + pickups.Count);
 
           //if (!PlayTag.realPickupPossibleList.Contains(chestSpawnsForLevel[i].pickups[0]))
-          if (!PlayTag.realPickupPossibleList.Contains(pickups[0]))
+          if (!PlayTagPickup.realPickupPossibleList.Contains(pickups[0]))
           {
             continue;
           }
 
           pickups[0] = getPlayTagPickupFromRealPickup(pickups[0]);
           //chestSpawnsForLevel[i].pickups[0] = getPlayTagPickupFromRealPickup(chestSpawnsForLevel[i].pickups[0]);
-          IsPlayTagSpawn = true;
+          //IsPlayTagSpawn = true;
           break;
         }
       }
-      else if (self.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlaytagGameMode>())
+      else if (self.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlayTag>())
       {
         Logger.Info("GetChestSpawnsForLevel_patch ok in if GameModeType");
 

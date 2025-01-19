@@ -16,9 +16,12 @@ namespace TFModFortRiseGameModePlaytag
   public class TFModFortRiseGameModePlaytagModule : FortModule
   {
     public static TFModFortRiseGameModePlaytagModule Instance;
+    public static Counter pause = new Counter();
+    public static String currentSong;
+    public static Player currentPlayer;
 
     public override Type SettingsType => typeof(TFModFortRiseGameModePlaytagSettings);
-    public TFModFortRiseGameModePlaytagSettings Settings => (TFModFortRiseGameModePlaytagSettings)Instance.InternalSettings;
+    public static TFModFortRiseGameModePlaytagSettings Settings => (TFModFortRiseGameModePlaytagSettings)Instance.InternalSettings;
 
     public TFModFortRiseGameModePlaytagModule() 
     {
@@ -37,6 +40,7 @@ namespace TFModFortRiseGameModePlaytag
       PlaytagRoundLogic.Load();
       MyTreasureSpawner.Load();
       MyPickup.Load();
+      MySession.Load();
       MyPauseMenu.Load();
     }
 
@@ -46,7 +50,40 @@ namespace TFModFortRiseGameModePlaytag
       PlaytagRoundLogic.Unload();
       MyTreasureSpawner.Unload();
       MyPickup.Unload();
+      MySession.Unload();
       MyPauseMenu.Unload();
+    }
+
+
+
+    public static void StartPlayTagEffect(Player player)
+    {
+      currentPlayer = player;
+      currentSong = Music.CurrentSong;
+      Music.Stop();
+      Sounds.boss_humanLaugh.Play(player.X);
+      player.Level.LightingLayer.SetSpotlight((LevelEntity)player);
+      //player.Level.Session.CurrentLevel.LightingLayer.SetSpotlight((LevelEntity)player);
+      Engine.TimeRate = 0.1f;
+      pause.Set(10);
+    }
+    public static void StopPlayTagEffect()
+    {
+      Music.Play(currentSong);
+      currentPlayer.Level.LightingLayer.CancelSpotlight();
+      //currentPlayer.Level.Session.CurrentLevel.LightingLayer.CancelSpotlight();
+      Engine.TimeRate = 1f;
+    }
+    public static void Update()
+    {
+      if ((bool)pause)
+      {
+        pause.Update();
+        if (!(bool)pause)
+        {
+          StopPlayTagEffect();
+        }
+      }
     }
   }
 }

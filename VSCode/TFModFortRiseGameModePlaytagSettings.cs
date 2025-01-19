@@ -14,10 +14,15 @@ namespace TFModFortRiseGameModePlaytag
     //[SettingsOptions("Instant", "Delayed")]
     //public int RespawnMode;
 
-    //[SettingsNumber(1, 20)]
-    //public int BaronLivesCount = 3;
+    [SettingsName("Delay Pickup")]
+    [SettingsNumber(1, 60)]
+    public int playTagDelayPickup = 15;
 
-    //[SettingsName("All Trigger Bramble Arrow")]
-    //public bool AllTriggerBrambleArrow;
+    [SettingsName("Delay Game Mode")]
+    [SettingsNumber(1, 60)]
+    public int playTagDelayModePlayTag = 20;
+
+    [SettingsName("Pickup Activated")]
+    public bool playTagPickupActivated = true;
   }
 }

@@ -181,7 +181,8 @@ namespace TFModFortRiseGameModePlaytag
       Player.ShootLock = true;
       foreach (Player p in this.Session.CurrentLevel.Players)
       {
-        MyPlayer.playTagCountDown[p.PlayerIndex] = MyPlayer.playTagDelayModePlayTag[p.PlayerIndex];
+        //MyPlayer.playTagCountDown[p.PlayerIndex] = MyPlayer.playTagDelayModePlayTag[p.PlayerIndex];
+        MyPlayer.playTagCountDown[p.PlayerIndex] = TFModFortRiseGameModePlaytagModule.Settings.playTagDelayModePlayTag;
         MyPlayer.playTagCountDownOn[p.PlayerIndex] = true;
         MyPlayer.playTag[p.PlayerIndex] = false;
         MyPlayer.creationTime[p.PlayerIndex] = DateTime.Now;

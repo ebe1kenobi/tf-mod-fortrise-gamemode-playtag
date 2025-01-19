@@ -7,7 +7,7 @@ using TowerFall;
 
 namespace TFModFortRiseGameModePlaytag
 {
-  public class MyPlayer : Player
+  public class MyPlayer
   {
     //public static Monocle.Collider[] wasColliders = new Monocle.Collider[4];
     internal static void Load()
@@ -34,9 +34,9 @@ namespace TFModFortRiseGameModePlaytag
     //public PlayTagHUD PlayTagHUD;
     public static Dictionary<int, PlayTagHUD> PlayTagHUD = new Dictionary<int, PlayTagHUD>(8);
     //public int playTagDelay = 10;
-    public static Dictionary<int, int> playTagDelay = new Dictionary<int, int>(8);
+    //public static Dictionary<int, int> playTagDelay = new Dictionary<int, int>(8);
     //public int playTagDelayModePlayTag = 15;
-    public static Dictionary<int, int> playTagDelayModePlayTag = new Dictionary<int, int>(8);
+    //public static Dictionary<int, int> playTagDelayModePlayTag = new Dictionary<int, int>(8);
     //public int playTagCountDown = 0;
     public static Dictionary<int, int> playTagCountDown = new Dictionary<int, int>(8);
     //public int previousPlayTagCountDown = 0;
@@ -50,16 +50,17 @@ namespace TFModFortRiseGameModePlaytag
     // End Play Tag var
 
     public MyPlayer(
-      int playerIndex,
-      Vector2 position,
-      Allegiance allegiance,
-      Allegiance teamColor,
-      PlayerInventory inventory,
-      Player.HatStates hatState,
-      bool frozen,
-      bool flash,
-      bool indicator)
-      : base(playerIndex, position, allegiance, teamColor, inventory, hatState, frozen, flash, indicator)
+      //int playerIndex,
+      //Vector2 position,
+      //Allegiance allegiance,
+      //Allegiance teamColor,
+      //PlayerInventory inventory,
+      //Player.HatStates hatState,
+      //bool frozen,
+      //bool flash,
+      //bool indicator
+      )
+      //: base(playerIndex, position, allegiance, teamColor, inventory, hatState, frozen, flash, indicator)
     {
       //jamais appelé ?
       //Logger.Init("ttttttttttttttttttttttttttMyPlayer");
@@ -74,8 +75,8 @@ namespace TFModFortRiseGameModePlaytag
       MyPlayer.PlayTagHUD[playerIndex] = new PlayTagHUD();
       self.Add((Monocle.Component)(MyPlayer.PlayTagHUD[playerIndex]));
       MyPlayer.playTag[playerIndex] = false;
-      MyPlayer.playTagDelay[playerIndex] = 10;
-      MyPlayer.playTagDelayModePlayTag[playerIndex] = 15;
+      //MyPlayer.playTagDelay[playerIndex] = 10;
+      //MyPlayer.playTagDelayModePlayTag[playerIndex] = 15;
       MyPlayer.previousPlayTagCountDown[playerIndex] = 0;
       MyPlayer.playTagCountDown[playerIndex] = 0;
       MyPlayer.playTagCountDownOn[playerIndex] = false;
@@ -151,14 +152,14 @@ namespace TFModFortRiseGameModePlaytag
       //  Logger.Info("MyPlayer.playTagCountDownOn " + false);
       //}
       //if (!MyPlayer.playTagCountDownOn[self.PlayerIndex] && self.Level.Session.MatchSettings.Mode != Modes.PlayTag)
-      if (!MyPlayer.playTagCountDownOn[self.PlayerIndex] && self.Level.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlaytagGameMode>())
+      if (!MyPlayer.playTagCountDownOn[self.PlayerIndex] && self.Level.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlayTag>())
       {
         //  //hide arrow
         orig(self, wrapped);
       }
 
       //// Active the arrows just after the explosion in case the tag is a survivor
-      if (self.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlaytagGameMode>() && !MyPlayer.playTagCountDownOn[self.PlayerIndex] 
+      if (self.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlayTag>() && !MyPlayer.playTagCountDownOn[self.PlayerIndex] 
       //if (self.Level.Session.MatchSettings.Mode == Modes.PlayTag && !MyPlayer.playTagCountDownOn[self.PlayerIndex] 
           && MyPlayer.previousPlayTagCountDown[self.PlayerIndex] > MyPlayer.playTagCountDown[self.PlayerIndex])
       {
@@ -205,10 +206,12 @@ namespace TFModFortRiseGameModePlaytag
         self.Aiming = false; 
         int delay;
         //if (this.Level.Session.MatchSettings.Mode == Modes.PlayTag) {
-        if (self.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlaytagGameMode>()) {
-          delay = MyPlayer.playTagDelayModePlayTag[self.PlayerIndex];
+        if (self.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlayTag>()) {
+          //delay = MyPlayer.playTagDelayModePlayTag[self.PlayerIndex];
+          delay = TFModFortRiseGameModePlaytagModule.Settings.playTagDelayModePlayTag;
+          
         } else {
-          delay = MyPlayer.playTagDelay[self.PlayerIndex];
+          delay = TFModFortRiseGameModePlaytagModule.Settings.playTagDelayPickup;
         }
         MyPlayer.previousPlayTagCountDown[self.PlayerIndex] = MyPlayer.playTagCountDown[self.PlayerIndex];
         MyPlayer.playTagCountDown[self.PlayerIndex] = delay - (int)(DateTime.Now - MyPlayer.creationTime[self.PlayerIndex]).TotalSeconds + MyPlayer.pauseDuration[self.PlayerIndex];
@@ -217,13 +220,13 @@ namespace TFModFortRiseGameModePlaytag
       }
     }
 
-    public void addPauseDuration(int pauseDuration) {
-      MyPlayer.pauseDuration[PlayerIndex] += pauseDuration;
-    }
+    //public void addPauseDuration(int pauseDuration) {
+    //  MyPlayer.pauseDuration[PlayerIndex] += pauseDuration;
+    //}
     
-    public void resetPauseDuration()
-    {
-      MyPlayer.pauseDuration[PlayerIndex] = 0;
-    }
+    //public void resetPauseDuration()
+    //{
+    //  MyPlayer.pauseDuration[PlayerIndex] = 0;
+    //}
   }
 }
