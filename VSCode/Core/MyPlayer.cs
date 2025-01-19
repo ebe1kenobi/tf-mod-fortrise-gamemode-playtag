@@ -100,7 +100,7 @@ namespace TFModFortRiseGameModePlaytag
     {
       orig(a, b);
       //if (a.playTag && !b.HasShield)
-      if (MyPlayer.playTag[a.PlayerIndex] && !b.HasShield)
+      if (MyPlayer.playTag[a.PlayerIndex])// && !b.HasShield)
       {
         //b.playTag = true;
         MyPlayer.playTag[b.PlayerIndex] = true;
@@ -113,7 +113,7 @@ namespace TFModFortRiseGameModePlaytag
         MyPlayer.playTag[a.PlayerIndex] = false;
       }
       //else if (b.playTag && !a.HasShield)
-      else if (MyPlayer.playTag[b.PlayerIndex] && !a.HasShield)
+      else if (MyPlayer.playTag[b.PlayerIndex])// && !a.HasShield)
       {
         //a.playTag = true;
         MyPlayer.playTag[a.PlayerIndex] = true;
