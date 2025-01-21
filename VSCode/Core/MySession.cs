@@ -7,20 +7,18 @@ using TowerFall;
 
 namespace TFModFortRiseGameModePlaytag
 {
-  public class MySession// : Session
+  public class MySession
   {
     public static int NbPlayTagPickupActivated { get; set; }
 
     internal static void Load()
     {
       On.TowerFall.Session.StartGame += StartGame_patch;
-      //On.TowerFall.Session.StartGame += LevelLoadStart_patch;
     }
 
     internal static void Unload()
     {
       On.TowerFall.Session.StartGame -= StartGame_patch;
-      //On.TowerFall.Session.StartGame -= LevelLoadStart_patch;
     }
     public MySession()
     {
@@ -43,16 +41,9 @@ namespace TFModFortRiseGameModePlaytag
     //}
 
     
-    //public static void LevelLoadStart_patch(On.TowerFall.Session.orig_StartGame orig, global::TowerFall.Session self)
-    //{
-    //  NbPlayTagPickupActivated = 0;
-    //  Logger.Info("LevelLoadStart_patch MySession.NbPlayTagPickupActivated = " + MySession.NbPlayTagPickupActivated);
-    //  orig(self);
-    //}
     public static void StartGame_patch(On.TowerFall.Session.orig_StartGame orig, global::TowerFall.Session self)
     {
       NbPlayTagPickupActivated = 0;
-      Logger.Info("StartGame_patch MySession.NbPlayTagPickupActivated = " + MySession.NbPlayTagPickupActivated);
       orig(self);
     }
   }

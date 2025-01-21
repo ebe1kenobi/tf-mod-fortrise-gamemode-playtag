@@ -9,11 +9,6 @@ namespace TFModFortRiseGameModePlaytag
 {
   public class TFModFortRiseGameModePlaytagSettings: ModuleSettings
   {
-    //public const int Instant = 0;
-    //public const int Delayed = 1;
-    //[SettingsOptions("Instant", "Delayed")]
-    //public int RespawnMode;
-
     [SettingsName("Delay Pickup")]
     [SettingsNumber(1, 60)]
     public int playTagDelayPickup = 15;

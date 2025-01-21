@@ -19,40 +19,9 @@ namespace TFModFortRiseGameModePlaytag
     private static int lastNumberOfPlayer = 0;
 
 
-    //public static RoundLogicInfo Create()
-    //{
-    //  //private static IDetour hook_GetDodgeExitState;
-
-
-    //  return new RoundLogicInfo
-    //  {
-    //    Name = "Playtag",
-    //    Icon = TFGame.MenuAtlas["gameModes/warlord"],
-    //    //Icon = TFModFortRiseGameModePlaytagModule.RespawnAtlas["gamemodes/respawn"], //TODO
-    //    RoundType = RoundLogicType.HeadHunters
-    //  };
-    //}
     internal static void Load()
     {
       On.TowerFall.RoundLogic.FFACheckForAllButOneDead += FFACheckForAllButOneDead_patch;
-
-      
-      //hook_GetDodgeExitState = new Hook(
-      //    typeof(Player).GetMethod("GetDodgeExitState", BindingFlags.NonPublic | BindingFlags.Instance),
-      //    Player_GetDodgeExitState
-      //);
-
-      //public static int Player_GetDodgeExitState(orig_Player_GetDodgeExitState orig, Player self)
-      //{
-      //  /* New */
-      //  if (VariantManager.GetCustomVariant("NoDodgeCooldowns")[self.PlayerIndex])
-      //  {
-      //    var dynData = new DynData<Player>(self);
-      //    dynData.Set("dodgeCooldown", false);
-      //    dynData.Dispose();
-      //  }
-      //  return orig(self);
-      //}
     }
 
     internal static void Unload()
@@ -173,15 +142,9 @@ namespace TFModFortRiseGameModePlaytag
 
     public void initPlayTag(int playerIndex)
     {
-      //todo log p.PlayerIndex
-      //Logger.Init("ttttttttttttttttttttttttttinitPlayTag");
-      //Logger.Info("initPlayTag" + playerIndex);
-      //Logger.Info("initPlayTagCount" + MyPlayer.playTag.Count);
-      //Logger.Info("initPlayTagToList" + MyPlayer.playTag.ToList());
       Player.ShootLock = true;
       foreach (Player p in this.Session.CurrentLevel.Players)
       {
-        //MyPlayer.playTagCountDown[p.PlayerIndex] = MyPlayer.playTagDelayModePlayTag[p.PlayerIndex];
         MyPlayer.playTagCountDown[p.PlayerIndex] = TFModFortRiseGameModePlaytagModule.Settings.playTagDelayModePlayTag;
         MyPlayer.playTagCountDownOn[p.PlayerIndex] = true;
         MyPlayer.playTag[p.PlayerIndex] = false;

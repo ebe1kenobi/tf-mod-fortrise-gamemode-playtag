@@ -63,7 +63,6 @@ namespace TFModFortRiseGameModePlaytag
       Music.Stop();
       Sounds.boss_humanLaugh.Play(player.X);
       player.Level.LightingLayer.SetSpotlight((LevelEntity)player);
-      //player.Level.Session.CurrentLevel.LightingLayer.SetSpotlight((LevelEntity)player);
       Engine.TimeRate = 0.1f;
       pause.Set(10);
     }
@@ -71,7 +70,6 @@ namespace TFModFortRiseGameModePlaytag
     {
       Music.Play(currentSong);
       currentPlayer.Level.LightingLayer.CancelSpotlight();
-      //currentPlayer.Level.Session.CurrentLevel.LightingLayer.CancelSpotlight();
       Engine.TimeRate = 1f;
     }
     public static void Update()

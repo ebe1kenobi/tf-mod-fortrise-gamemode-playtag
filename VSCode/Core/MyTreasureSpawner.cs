@@ -7,46 +7,10 @@ using TowerFall;
 
 namespace TFModFortRiseGameModePlaytag
 {
-  public class MyTreasureSpawner // : TreasureSpawner
+  public class MyTreasureSpawner
   {
-    //private const float BIG_CHEST_CHANCE = 0.03f;
-    //public static readonly float[][] ChestChances = new float[5][];
-    //public static readonly bool[] DarkWorldTreasures;
-    //public const float DEFAULT_ARROW_CHANCE = 0.6f;
-    //public static readonly float[] DefaultTreasureChances = new float[20]; 
-    //public static readonly int[] FullTreasureMask = new int[20];  
-    //public static bool IsPlayTagSpawn = false;
     public static List<Pickups> listPickupArrow = new List<Pickups>();
     public static List<Pickups> listPickupReplacement = new List<Pickups>();
-
-    //static MyTreasureSpawner()
-    //{
-
-    //  float[] numArray = new float[] { 0.9f, 0.9f, 0.2f, 0.1f };
-    //  float[] numArray2 = new float[] { 0.9f, 0.9f, 0.8f, 0.2f, 0.1f };
-    //  float[] numArray3 = new float[] { 0.9f, 0.9f, 0.6f, 0.8f, 0.2f, 0.1f };
-    //  float[] numArray4 = new float[] { 0.9f, 0.9f, 0.9f, 0.6f, 0.8f, 0.2f, 0.1f };
-    //  float[] numArray5 = new float[] { 0.9f, 0.9f, 0.9f, 0.9f, 0.6f, 0.8f, 0.2f, 0.1f };
-    //  ChestChances[0] = numArray;
-    //  ChestChances[1] = numArray2;
-    //  ChestChances[2] = numArray3;
-    //  ChestChances[3] = numArray4;
-    //  ChestChances[4] = numArray5;
-    //  DefaultTreasureChances = new float[] {
-    //            0.8f, 0.8f, 0.8f, 0.8f, 0.8f, 0.8f, 0.8f, 0.8f, 0.8f, 0.8f,
-    //              0.5f, 0.5f, 0.5f, 0.25f, 0.15f, 0.15f,
-    //            0.15f, 0.15f, 0.001f, 0.1f,
-    //          };
-    //  FullTreasureMask = new int[] {
-    //            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-    //            1, 1, 1, 1, 1, 1, 1,
-    //            1, 1, 1,
-    //        };
-    //bool[] flagArray = new bool[20];
-    //  flagArray[8] = true;
-    //  flagArray[9] = true;
-    //  DarkWorldTreasures = flagArray;
-    //}
 
     internal static void Load()
     {
@@ -120,72 +84,44 @@ namespace TFModFortRiseGameModePlaytag
     {
       List<TreasureChest> chestSpawnsForLevel = orig(self,chestPositions, bigChestPositions);
 
-      Logger.Info("GetChestSpawnsForLevel_patch MySession.NbPlayTagPickupActivated = " + MySession.NbPlayTagPickupActivated);
-
       if (
-          //!IsPlayTagSpawn && 
           TFModFortRiseGameModePlaytagModule.Settings.playTagPickupActivated
           && chestSpawnsForLevel.Count > 0 
           && MySession.NbPlayTagPickupActivated == 0
           && self.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlayTag>())
       {
-        Logger.Info("GetChestSpawnsForLevel_patch ok in if chestSpawnsForLevel");
-
         Random rnd = new Random();
-        int draw = 1;// rnd.Next(0, 3);
+        int draw = rnd.Next(0, 5);
         for (var i = 0; draw == 1 && i < chestSpawnsForLevel.Count; i++)
         {
           var dynData = DynamicData.For(chestSpawnsForLevel[i]);
           List<Pickups> pickups = (List<Pickups>)dynData.Get("pickups");
-          Logger.Info("GetChestSpawnsForLevel_patch pickups?count =" + pickups.Count);
-
-          //if (!PlayTag.realPickupPossibleList.Contains(chestSpawnsForLevel[i].pickups[0]))
           if (!PlayTagPickup.realPickupPossibleList.Contains(pickups[0]))
           {
             continue;
           }
 
           pickups[0] = getPlayTagPickupFromRealPickup(pickups[0]);
-          //chestSpawnsForLevel[i].pickups[0] = getPlayTagPickupFromRealPickup(chestSpawnsForLevel[i].pickups[0]);
-          //IsPlayTagSpawn = true;
           break;
         }
       }
       else if (self.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlayTag>())
       {
-        Logger.Info("GetChestSpawnsForLevel_patch ok in if GameModeType");
-
         Random rnd = new Random();
 
         for (var i = 0; i < chestSpawnsForLevel.Count; i++)
         {
           var dynData = DynamicData.For(chestSpawnsForLevel[i]);
           List<Pickups> pickups = (List<Pickups>)dynData.Get("pickups");
-          //if (!listPickupArrow.Contains(chestSpawnsForLevel[i].pickups[0]))
           if (!listPickupArrow.Contains(pickups[0]))
           {
             continue;
           }
           // No need for Arrow in this mode
-          //chestSpawnsForLevel[i].pickups[0] = listPickupReplacement[rnd.Next(0, listPickupReplacement.Count - 1)];
           pickups[0] = listPickupReplacement[rnd.Next(0, listPickupReplacement.Count - 1)];
         }
       }
       return chestSpawnsForLevel;
     }
-
-    //public override bool CanSpawnAnotherChest(int alreadySpawnedAmount)
-    //{
-    //  if (alreadySpawnedAmount >= ChestChances[Math.Min((TFGame.PlayerAmount - 2), 4)].Length)
-    //  {
-    //    return false;
-    //  }
-    //  if (this.Session.MatchSettings.Variants.MaxTreasure == null)
-    //  {
-    //    return this.Random.Chance(ChestChances[Math.Min((TFGame.PlayerAmount - 2), 4)][alreadySpawnedAmount]);
-    //  }
-    //  return true;
-    //}
-
   }
 }
