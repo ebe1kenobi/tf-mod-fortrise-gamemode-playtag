@@ -18,7 +18,6 @@ namespace TFModFortRiseGameModePlaytag
     private static int currentPlayerOrderIndex;
     private static int lastNumberOfPlayer = 0;
 
-
     internal static void Load()
     {
       On.TowerFall.RoundLogic.FFACheckForAllButOneDead += FFACheckForAllButOneDead_patch;

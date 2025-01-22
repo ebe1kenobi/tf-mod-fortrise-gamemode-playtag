@@ -1,13 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Xml;
 using FortRise;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using Monocle;
-using MonoMod.ModInterop;
-using MonoMod.Utils;
 using TowerFall;
 
 namespace TFModFortRiseGameModePlaytag
@@ -19,6 +12,8 @@ namespace TFModFortRiseGameModePlaytag
     public static Counter pause = new Counter();
     public static String currentSong;
     public static Player currentPlayer;
+    public static float currentTimerate;
+    
 
     public override Type SettingsType => typeof(TFModFortRiseGameModePlaytagSettings);
     public static TFModFortRiseGameModePlaytagSettings Settings => (TFModFortRiseGameModePlaytagSettings)Instance.InternalSettings;
@@ -26,7 +21,7 @@ namespace TFModFortRiseGameModePlaytag
     public TFModFortRiseGameModePlaytagModule() 
     {
         Instance = this;
-        Logger.Init("PlaytagLOG");
+        //Logger.Init("PlaytagLOG");
     }
 
     public override void LoadContent()
@@ -42,6 +37,7 @@ namespace TFModFortRiseGameModePlaytag
       MyPickup.Load();
       MySession.Load();
       MyPauseMenu.Load();
+      MyLevel.Load();
     }
 
     public override void Unload()
@@ -52,26 +48,29 @@ namespace TFModFortRiseGameModePlaytag
       MyPickup.Unload();
       MySession.Unload();
       MyPauseMenu.Unload();
+      MyLevel.Unload();
     }
-
-
 
     public static void StartPlayTagEffect(Player player)
     {
       currentPlayer = player;
       currentSong = Music.CurrentSong;
+      currentTimerate = Engine.TimeRate;
       Music.Stop();
       Sounds.boss_humanLaugh.Play(player.X);
       player.Level.LightingLayer.SetSpotlight((LevelEntity)player);
       Engine.TimeRate = 0.1f;
       pause.Set(10);
     }
+
     public static void StopPlayTagEffect()
     {
       Music.Play(currentSong);
       currentPlayer.Level.LightingLayer.CancelSpotlight();
-      Engine.TimeRate = 1f;
+      //Engine.TimeRate = currentTimerate;
+      Engine.TimeRate = 1.0f;
     }
+
     public static void Update()
     {
       if ((bool)pause)

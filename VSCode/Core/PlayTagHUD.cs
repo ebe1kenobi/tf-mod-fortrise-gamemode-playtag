@@ -50,7 +50,7 @@ namespace TFModFortRiseGameModePlaytag
         Explosion.SpawnSuper(player.Level, player.Position, player.PlayerIndex, true);
       }
 
-      Draw.OutlineTextCentered(TFGame.Font, MyPlayer.playTagCountDown[player.PlayerIndex].ToString(), Calc.Floor(player.Position + new Vector2(0f, -15f)), triggerColor, new Vector2(1f, 1f));
+      Draw.OutlineTextCentered(TFGame.Font, MyPlayer.playTagCountDown[player.PlayerIndex].ToString(), Calc.Floor(player.Position + new Vector2(0f, -15f)), triggerColor, new Vector2(1.8f, 1.8f));
     }
   }
 }

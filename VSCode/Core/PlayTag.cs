@@ -403,7 +403,7 @@ namespace TFModFortRiseGameModePlaytag
     public override void TweenUpdate(float t)
     {
       base.TweenUpdate(t);
-      this.image.Scale = Vector2.One * t;
+      this.mirror.Scale = Vector2.One * t;
     }
   }
 
