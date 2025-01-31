@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
 using FortRise;
+using Microsoft.Xna.Framework;
 using Monocle;
+using MonoMod.ModInterop;
 using TowerFall;
 
 namespace TFModFortRiseGameModePlaytag
@@ -38,6 +41,8 @@ namespace TFModFortRiseGameModePlaytag
       MySession.Load();
       MyPauseMenu.Load();
       MyLevel.Load();
+
+      typeof(ModExports).ModInterop();
     }
 
     public override void Unload()
@@ -59,8 +64,16 @@ namespace TFModFortRiseGameModePlaytag
       Music.Stop();
       Sounds.boss_humanLaugh.Play(player.X);
       player.Level.LightingLayer.SetSpotlight((LevelEntity)player);
+      for (int i = 0; i < TFGame.Players.Length; i++)
+      {
+        if (TFGame.Players[i])
+        {
+          TFGame.PlayerInputs[i].Rumble(1f, 20);
+        }
+      }
+
       Engine.TimeRate = 0.1f;
-      pause.Set(10);
+      pause.Set(30);
     }
 
     public static void StopPlayTagEffect()
@@ -82,5 +95,13 @@ namespace TFModFortRiseGameModePlaytag
         }
       }
     }
+  }
+
+  [ModExportName("com.fortrise.TFModFortRiseGameModePlaytag")]
+  public static class ModExports
+  {
+    public static bool IsGameModePlayTag(Modes mode) => mode == ModRegisters.GameModeType<PlayTag>();
+    public static bool IsPlayTagCountDownOn(int playerIndex) => MyPlayer.playTagCountDownOn[playerIndex];
+    public static bool IsPlayerPlayTag(int playerIndex) => MyPlayer.playTag[playerIndex];
   }
 }
