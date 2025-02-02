@@ -91,6 +91,7 @@ namespace TFModFortRiseGameModePlaytag
           && self.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlayTag>())
       {
         Random rnd = new Random();
+        //int draw = 1;
         int draw = rnd.Next(0, 5);
         for (var i = 0; draw == 1 && i < chestSpawnsForLevel.Count; i++)
         {

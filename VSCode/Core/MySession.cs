@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using FortRise;
-using Microsoft.Xna.Framework;
-using TowerFall;
-
-namespace TFModFortRiseGameModePlaytag
+﻿namespace TFModFortRiseGameModePlaytag
 {
   public class MySession
   {
@@ -24,23 +17,6 @@ namespace TFModFortRiseGameModePlaytag
     {
     }
 
-    //public bool IsInOvertime //TODO override ?
-    //{
-    //  get
-    //  {
-    //    if (this.RoundIndex >= 0 && (this.MatchSettings.Mode == Modes.HeadHunters || this.MatchSettings.Mode == Modes.PlayTag))
-    //    {
-    //      for (int index = 0; index < this.Scores.Length; ++index)
-    //      {
-    //        if (this.Scores[index] >= this.MatchSettings.GoalScore)
-    //          return true;
-    //      }
-    //    }
-    //    return false;
-    //  }
-    //}
-
-    
     public static void StartGame_patch(On.TowerFall.Session.orig_StartGame orig, global::TowerFall.Session self)
     {
       NbPlayTagPickupActivated = 0;

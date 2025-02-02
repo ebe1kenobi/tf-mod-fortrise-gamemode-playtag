@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Monocle;
 using TowerFall;
 using static TowerFall.PauseMenu;
 
@@ -27,7 +26,7 @@ namespace TFModFortRiseGameModePlaytag
 
     public static void ctor_patch(On.TowerFall.PauseMenu.orig_ctor origin, PauseMenu self, Level level, Vector2 position, MenuType menuType, int controllerDisconnected = -1) {
       origin(self, level, position, menuType, controllerDisconnected);
-      mylevel = level; // works ? same reference than private self.level
+      mylevel = level; 
       creationTime = DateTime.Now;
     }
 

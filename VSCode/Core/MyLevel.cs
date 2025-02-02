@@ -1,7 +1,4 @@
-﻿using FortRise;
-using TowerFall;
-
-namespace TFModFortRiseGameModePlaytag
+﻿namespace TFModFortRiseGameModePlaytag
 {
   public class MyLevel
   {

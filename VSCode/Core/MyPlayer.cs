@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using FortRise;
 using Microsoft.Xna.Framework;
 using TowerFall;
@@ -57,7 +56,7 @@ namespace TFModFortRiseGameModePlaytag
     public static void PlayerOnPlayer_patch(On.TowerFall.Player.orig_PlayerOnPlayer orig, Player a, Player b)
     {
       orig(a, b);
-      if (MyPlayer.playTag[a.PlayerIndex])// && !b.HasShield)
+      if (MyPlayer.playTag[a.PlayerIndex])
       {
         MyPlayer.playTag[b.PlayerIndex] = true;
         MyPlayer.playTagCountDown[b.PlayerIndex] = MyPlayer.playTagCountDown[a.PlayerIndex];
@@ -65,7 +64,7 @@ namespace TFModFortRiseGameModePlaytag
 
         MyPlayer.playTag[a.PlayerIndex] = false;
       }
-      else if (MyPlayer.playTag[b.PlayerIndex])// && !a.HasShield)
+      else if (MyPlayer.playTag[b.PlayerIndex])
       {
         MyPlayer.playTag[a.PlayerIndex] = true;
         MyPlayer.playTagCountDownOn[a.PlayerIndex] = true;
