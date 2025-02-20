@@ -20,6 +20,7 @@ In other versus mode, a treasure chest can give a hidden Play Tag item in the fo
 When a Player will take the false items, the playtag mode will activate for 20 seconds, then the normal mode will be back.
 
 You can set the delay of each countdown in the mods options, and choose if you want the playtag pickup to appear in the chest.
+
 ![image](https://github.com/user-attachments/assets/14881921-f373-467f-85b5-6014967471a7)
 
 # Acknowledgements
