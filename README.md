@@ -1,6 +1,9 @@
 todo : when tag died with arrow -> deactivate Tag mode
 Port to FortRise of PlayTag Mod https://github.com/ebe1kenobi/tf-mod-playtag
 
+* WiderSetMod supported
+
+
 # PlayTag mod
 
 
