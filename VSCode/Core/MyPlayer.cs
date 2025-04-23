@@ -15,6 +15,7 @@ namespace TFModFortRiseGameModePlaytag
       On.TowerFall.Player.PlayerOnPlayer += PlayerOnPlayer_patch;
       On.TowerFall.Player.HurtBouncedOn += HurtBouncedOn_patch;
       On.TowerFall.Player.Update += Update;
+      On.TowerFall.Player.Die_DeathCause_int_bool_bool += Die_DeathCause_int_bool_bool_patch;
     }
 
     internal static void Unload()
@@ -24,6 +25,7 @@ namespace TFModFortRiseGameModePlaytag
       On.TowerFall.Player.PlayerOnPlayer -= PlayerOnPlayer_patch;
       On.TowerFall.Player.HurtBouncedOn -= HurtBouncedOn_patch;
       On.TowerFall.Player.Update -= Update;
+      On.TowerFall.Player.Die_DeathCause_int_bool_bool -= Die_DeathCause_int_bool_bool_patch;
     }
 
     // Play Tag var
@@ -125,6 +127,16 @@ namespace TFModFortRiseGameModePlaytag
         MyPlayer.previousPlayTagCountDown[self.PlayerIndex] = MyPlayer.playTagCountDown[self.PlayerIndex];
         MyPlayer.playTagCountDown[self.PlayerIndex] = delay - (int)(DateTime.Now - MyPlayer.creationTime[self.PlayerIndex]).TotalSeconds + MyPlayer.pauseDuration[self.PlayerIndex];
       }
+    }
+
+    public static PlayerCorpse Die_DeathCause_int_bool_bool_patch(On.TowerFall.Player.orig_Die_DeathCause_int_bool_bool orig, global::TowerFall.Player self, DeathCause deathCause, int killerIndex, bool brambled, bool laser)
+    {
+      //stop playtag if Tag player is killed before countdown reach 0
+      //test when killed by the explosion
+      if (MyPlayer.playTag[self.PlayerIndex]){
+        TFModFortRiseGameModePlaytagModule.EndPlayTag(self);
+      }
+      return orig(self, deathCause, killerIndex, brambled, laser);
     }
   }
 }

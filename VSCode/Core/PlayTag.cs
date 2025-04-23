@@ -77,7 +77,7 @@ namespace TFModFortRiseGameModePlaytag
         {
           MyPlayer.playTagCountDownOn[p.PlayerIndex] = true;
         }
-        MySession.NbPlayTagPickupActivated++;
+        //MySession.NbPlayTagPickupActivated++;
 
         TFModFortRiseGameModePlaytagModule.StartPlayTagEffect(player);
       }

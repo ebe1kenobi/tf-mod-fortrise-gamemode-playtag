@@ -12,7 +12,13 @@ namespace TFModFortRiseGameModePlaytag
     [SettingsNumber(1, 60)]
     public int playTagDelayModePlayTag = 20;
 
-    [SettingsName("Pickup Activated")]
-    public bool playTagPickupActivated = true;
+    [SettingsName("Pickup Always Activated")]
+    public bool playTagPickupActivated = false;
+
+    public const int OncePerMatch = 0;
+    public const int OncePerRound = 1;
+    public const int Test = 2;
+    [SettingsOptions("OncePerMatch", "OncePerRound", "Test")]
+    public int periodicity = 0;
   }
 }

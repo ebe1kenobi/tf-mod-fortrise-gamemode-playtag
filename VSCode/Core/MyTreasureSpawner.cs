@@ -82,17 +82,27 @@ namespace TFModFortRiseGameModePlaytag
       List<Vector2> chestPositions,
       List<Vector2> bigChestPositions)
     {
-      List<TreasureChest> chestSpawnsForLevel = orig(self,chestPositions, bigChestPositions);
+      List <TreasureChest> chestSpawnsForLevel = orig(self,chestPositions, bigChestPositions);
 
-      if (
-          TFModFortRiseGameModePlaytagModule.Settings.playTagPickupActivated
-          && chestSpawnsForLevel.Count > 0 
+      if (chestSpawnsForLevel.Count == 0)
+      {
+        return chestSpawnsForLevel;
+      }
+
+      if (TFModFortRiseGameModePlaytagModule.activated()
           && MySession.NbPlayTagPickupActivated == 0
           && self.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlayTag>())
       {
         Random rnd = new Random();
-        //int draw = 1;
-        int draw = rnd.Next(0, 5);
+        int draw;
+        if (TFModFortRiseGameModePlaytagModule.Settings.periodicity == TFModFortRiseGameModePlaytagSettings.Test)
+        {
+          draw = 1;
+        }
+        else
+        {
+          draw = rnd.Next(0, 10);
+        }
         for (var i = 0; draw == 1 && i < chestSpawnsForLevel.Count; i++)
         {
           var dynData = DynamicData.For(chestSpawnsForLevel[i]);
@@ -103,23 +113,8 @@ namespace TFModFortRiseGameModePlaytag
           }
 
           pickups[0] = getPlayTagPickupFromRealPickup(pickups[0]);
+          MySession.NbPlayTagPickupActivated++;
           break;
-        }
-      }
-      else if (self.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlayTag>())
-      {
-        Random rnd = new Random();
-
-        for (var i = 0; i < chestSpawnsForLevel.Count; i++)
-        {
-          var dynData = DynamicData.For(chestSpawnsForLevel[i]);
-          List<Pickups> pickups = (List<Pickups>)dynData.Get("pickups");
-          if (!listPickupArrow.Contains(pickups[0]))
-          {
-            continue;
-          }
-          // No need for Arrow in this mode
-          pickups[0] = listPickupReplacement[rnd.Next(0, listPickupReplacement.Count - 1)];
         }
       }
       return chestSpawnsForLevel;

@@ -29,7 +29,21 @@ namespace TFModFortRiseGameModePlaytag
 
     public override void LoadContent()
     {
+    }
+
+    public static bool activated()
+    {
+      return VariantManager.GetCustomVariant("PlayTag") || Settings.playTagPickupActivated;
+    }
+
+    public override void OnVariantsRegister(VariantManager manager, bool noPerPlayer = false)
+    {
       
+      var icon = new CustomVariantInfo(
+          "PlayTag", TFGame.MenuAtlas["variants/stealthArchers"],
+          CustomVariantFlags.None
+          );
+      manager.AddVariant(icon);
     }
 
     public override void Load()
@@ -54,6 +68,25 @@ namespace TFModFortRiseGameModePlaytag
       MySession.Unload();
       MyPauseMenu.Unload();
       MyLevel.Unload();
+    }
+    //public override void OnVariantsRegister(VariantManager manager, bool noPerPlayer = false)
+    //{
+    //  var info1x1 = new CustomVariantInfo(
+    //      "SpeedGamex1.1", VariantManager.GetVariantIconFromName("SpeedGamex1.1", SpeedAtlas),
+    //      CustomVariantFlags.None
+    //      );
+    //  manager.AddVariant(info1x1);
+    //}
+
+    public static void EndPlayTag(Player player) {
+      pause.Set(0);
+      foreach (Player p in player.Level.Session.CurrentLevel[GameTags.Player])
+      {
+        MyPlayer.playTagCountDownOn[p.PlayerIndex] = false;
+      }
+      Player.ShootLock = false;
+      Music.Play(currentSong);
+      Engine.TimeRate = 1.0f;
     }
 
     public static void StartPlayTagEffect(Player player)
