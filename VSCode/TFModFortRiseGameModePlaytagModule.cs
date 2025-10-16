@@ -23,8 +23,8 @@ namespace TFModFortRiseGameModePlaytag
 
     public TFModFortRiseGameModePlaytagModule() 
     {
-        Instance = this;
-        //Logger.Init("PlaytagLOG");
+      Instance = this;
+      //Logger.Init("Playtag");
     }
 
     public override void LoadContent()
@@ -85,7 +85,11 @@ namespace TFModFortRiseGameModePlaytag
         MyPlayer.playTagCountDownOn[p.PlayerIndex] = false;
       }
       Player.ShootLock = false;
-      Music.Play(currentSong);
+      // no currentSong on GameMode playtag
+      if (currentSong != null) {
+        //Logger.Info("EndPlayTag currentSong = " + currentSong);
+        Music.Play(currentSong);
+      }
       Engine.TimeRate = 1.0f;
     }
 
@@ -93,6 +97,8 @@ namespace TFModFortRiseGameModePlaytag
     {
       currentPlayer = player;
       currentSong = Music.CurrentSong;
+      //Logger.Info("StartPlayTagEffect currentSong = " + currentSong);
+
       currentTimerate = Engine.TimeRate;
       Music.Stop();
       Sounds.boss_humanLaugh.Play(player.X);
@@ -111,6 +117,8 @@ namespace TFModFortRiseGameModePlaytag
 
     public static void StopPlayTagEffect()
     {
+      //Logger.Info("StopPlayTagEffect currentSong = " + currentSong);
+
       Music.Play(currentSong);
       currentPlayer.Level.LightingLayer.CancelSpotlight();
       //Engine.TimeRate = currentTimerate;
