@@ -101,7 +101,7 @@ namespace TFModFortRiseGameModePlaytag
         }
         else
         {
-          draw = rnd.Next(0, 10);
+          draw = rnd.Next(0, 20);
         }
         for (var i = 0; draw == 1 && i < chestSpawnsForLevel.Count; i++)
         {

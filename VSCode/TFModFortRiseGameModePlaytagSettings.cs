@@ -1,9 +1,14 @@
-﻿using FortRise;
+﻿using System.Configuration;
+using FortRise;
 
 namespace TFModFortRiseGameModePlaytag
 {
   public class TFModFortRiseGameModePlaytagSettings: ModuleSettings
   {
+
+    [SettingsName("Pickup activated even \n\nwhen variant is not selected")]
+    public bool playTagPickupActivated = false;
+
     [SettingsName("Delay Pickup")]
     [SettingsNumber(1, 60)]
     public int playTagDelayPickup = 15;
@@ -11,9 +16,6 @@ namespace TFModFortRiseGameModePlaytag
     [SettingsName("Delay Game Mode")]
     [SettingsNumber(1, 60)]
     public int playTagDelayModePlayTag = 20;
-
-    [SettingsName("Pickup Always Activated")]
-    public bool playTagPickupActivated = false;
 
     public const int OncePerMatch = 0;
     public const int OncePerRound = 1;
