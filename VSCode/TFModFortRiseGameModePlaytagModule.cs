@@ -87,7 +87,6 @@ namespace TFModFortRiseGameModePlaytag
       Player.ShootLock = false;
       // no currentSong on GameMode playtag
       if (currentSong != null) {
-        //Logger.Info("EndPlayTag currentSong = " + currentSong);
         Music.Play(currentSong);
       }
       Engine.TimeRate = 1.0f;
@@ -97,7 +96,6 @@ namespace TFModFortRiseGameModePlaytag
     {
       currentPlayer = player;
       currentSong = Music.CurrentSong;
-      //Logger.Info("StartPlayTagEffect currentSong = " + currentSong);
 
       currentTimerate = Engine.TimeRate;
       Music.Stop();
@@ -117,7 +115,6 @@ namespace TFModFortRiseGameModePlaytag
 
     public static void StopPlayTagEffect()
     {
-      //Logger.Info("StopPlayTagEffect currentSong = " + currentSong);
 
       Music.Play(currentSong);
       currentPlayer.Level.LightingLayer.CancelSpotlight();

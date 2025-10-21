@@ -9,6 +9,10 @@ namespace TFModFortRiseGameModePlaytag
     [SettingsName("Pickup activated even \n\nwhen variant is not selected")]
     public bool playTagPickupActivated = false;
 
+    [SettingsName("Treasure Rate 1 chance on N, choose N")]
+    [SettingsNumber(10, 100)]
+    public int treasureRate = 100;
+
     [SettingsName("Delay Pickup")]
     [SettingsNumber(1, 60)]
     public int playTagDelayPickup = 15;
