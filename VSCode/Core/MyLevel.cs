@@ -1,21 +1,22 @@
-﻿namespace TFModFortRiseGameModePlaytag
+﻿using FortRise;
+using HarmonyLib;
+using TowerFall;
+
+namespace TFModFortRiseGameModePlaytag
 {
-  public class MyLevel
+  public class MyLevel : IHookable
   {
 
-    internal static void Load()
+    public static void Load(IHarmony harmony)
     {
-      On.TowerFall.Level.Update += Update_patch;
+      harmony.Patch(
+          AccessTools.DeclaredMethod(typeof(Level), nameof(Level.Update)),
+          prefix: new HarmonyMethod(Update_patch)
+      );
     }
 
-    internal static void Unload()
-    {
-      On.TowerFall.Level.Update -= Update_patch;
-    }
-
-    public static void Update_patch(On.TowerFall.Level.orig_Update orig, global::TowerFall.Level self) {
+    public static void Update_patch(Level __instance) {
       TFModFortRiseGameModePlaytagModule.Update();
-      orig(self);
     }
 
   }

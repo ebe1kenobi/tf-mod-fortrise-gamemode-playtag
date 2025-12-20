@@ -1,31 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 using FortRise;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using TowerFall;
+using static TowerFall.Player;
 
 namespace TFModFortRiseGameModePlaytag
 {
-  public class MyPlayer
+  public class MyPlayer : IHookable
   {
-    internal static void Load()
+    public static void Load(IHarmony harmony)
     {
-      On.TowerFall.Player.ctor += ctor_patch;
-      On.TowerFall.Player.HUDRender += HUDRender_patch;
-      On.TowerFall.Player.PlayerOnPlayer += PlayerOnPlayer_patch;
-      On.TowerFall.Player.HurtBouncedOn += HurtBouncedOn_patch;
-      On.TowerFall.Player.Update += Update;
-      On.TowerFall.Player.Die_DeathCause_int_bool_bool += Die_DeathCause_int_bool_bool_patch;
-    }
-
-    internal static void Unload()
-    {
-      On.TowerFall.Player.ctor -= ctor_patch;
-      On.TowerFall.Player.HUDRender -= HUDRender_patch;
-      On.TowerFall.Player.PlayerOnPlayer -= PlayerOnPlayer_patch;
-      On.TowerFall.Player.HurtBouncedOn -= HurtBouncedOn_patch;
-      On.TowerFall.Player.Update -= Update;
-      On.TowerFall.Player.Die_DeathCause_int_bool_bool -= Die_DeathCause_int_bool_bool_patch;
+      harmony.Patch(
+          AccessTools.DeclaredConstructor(typeof(Player), [
+                                                            typeof(int),
+                                                            typeof(Vector2),
+                                                            typeof(Allegiance),
+                                                            typeof(Allegiance),
+                                                            typeof(PlayerInventory),
+                                                            typeof(HatStates),
+                                                            typeof(bool),
+                                                            typeof(bool),
+                                                            typeof(bool)
+                                                                        ]),
+          postfix: new HarmonyMethod(ctor_patch)
+      );
+      harmony.Patch(
+          AccessTools.DeclaredMethod(typeof(Player), nameof(Player.HUDRender)),
+          postfix: new HarmonyMethod(HUDRender_patch)
+      );
+      harmony.Patch(
+          AccessTools.DeclaredMethod(typeof(Player), "PlayerOnPlayer"),
+          postfix: new HarmonyMethod(PlayerOnPlayer_patch)
+      );
+      harmony.Patch(
+          AccessTools.DeclaredMethod(typeof(Player), nameof(Player.HurtBouncedOn)),
+          prefix: new HarmonyMethod(HurtBouncedOn_patch)
+      );
+      harmony.Patch(
+          AccessTools.DeclaredMethod(typeof(Player), nameof(Player.Update)),
+          postfix: new HarmonyMethod(Update)
+      );
+      //harmony.Patch(
+      //    AccessTools.DeclaredMethod(typeof(Player), nameof(Player.Die), [
+      //                                                       typeof(DeathCause),
+      //                                                       typeof(int),
+      //                                                       typeof(bool),
+      //                                                       typeof(bool)
+      //                                                                  ]),
+      //    prefix: new HarmonyMethod(Die_DeathCause_int_bool_bool_prefix_patch)
+      //);
+      harmony.Patch(
+          AccessTools.DeclaredMethod(typeof(Player), nameof(Player.Die), [
+                                                             typeof(DeathCause),
+                                                             typeof(int),
+                                                             typeof(bool),
+                                                             typeof(bool)
+                                                                        ]),
+          postfix: new HarmonyMethod(Die_DeathCause_int_bool_bool_postfix_patch)
+      );
     }
 
     // Play Tag var
@@ -38,15 +72,9 @@ namespace TFModFortRiseGameModePlaytag
     public static Dictionary<int, int> pauseDuration = new Dictionary<int, int>(8);
     // End Play Tag var
 
-    public MyPlayer(
-      )
-    {
-    }
-
-    public static void ctor_patch(On.TowerFall.Player.orig_ctor orig, TowerFall.Player self, int playerIndex, Vector2 position, Allegiance allegiance, Allegiance teamColor, global::TowerFall.PlayerInventory inventory, global::TowerFall.Player.HatStates hatState, bool frozen, bool flash, bool indicator) {
-      orig(self, playerIndex, position, allegiance, teamColor, inventory, hatState, frozen, flash, indicator);
+    public static void ctor_patch(Player __instance, int playerIndex, Vector2 position, Allegiance allegiance, Allegiance teamColor, global::TowerFall.PlayerInventory inventory, global::TowerFall.Player.HatStates hatState, bool frozen, bool flash, bool indicator) {
       MyPlayer.PlayTagHUD[playerIndex] = new PlayTagHUD();
-      self.Add((Monocle.Component)(MyPlayer.PlayTagHUD[playerIndex]));
+      __instance.Add((Monocle.Component)(MyPlayer.PlayTagHUD[playerIndex]));
       MyPlayer.playTag[playerIndex] = false;
       MyPlayer.previousPlayTagCountDown[playerIndex] = 0;
       MyPlayer.playTagCountDown[playerIndex] = 0;
@@ -55,9 +83,8 @@ namespace TFModFortRiseGameModePlaytag
       MyPlayer.pauseDuration[playerIndex] = 0;
     }
 
-    public static void PlayerOnPlayer_patch(On.TowerFall.Player.orig_PlayerOnPlayer orig, Player a, Player b)
+    public static void PlayerOnPlayer_patch(Player __instance, Player a, Player b)
     {
-      orig(a, b);
       if (MyPlayer.playTag[a.PlayerIndex])
       {
         MyPlayer.playTag[b.PlayerIndex] = true;
@@ -76,22 +103,27 @@ namespace TFModFortRiseGameModePlaytag
         MyPlayer.playTag[b.PlayerIndex] = false;
       }
     }
-    public static void HUDRender_patch(On.TowerFall.Player.orig_HUDRender orig, TowerFall.Player self, bool wrapped)
+    public static void HUDRender_patch(Player __instance, bool wrapped)
     {
-      if (!MyPlayer.playTagCountDownOn[self.PlayerIndex] && self.Level.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlayTag>())
+      if (!MyPlayer.playTagCountDownOn[__instance.PlayerIndex] && 
+          //__instance.Level.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlayTag>())
+        __instance.Level.Session.MatchSettings.Mode != PlayTagGameMode.PlayTagMode.Modes)
       {
-        orig(self, wrapped);
+        return;
       }
 
-      if (self.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlayTag>() && !MyPlayer.playTagCountDownOn[self.PlayerIndex] 
-          && MyPlayer.previousPlayTagCountDown[self.PlayerIndex] > MyPlayer.playTagCountDown[self.PlayerIndex])
+      //if (__instance.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlayTag>() 
+      if (__instance.Level.Session.MatchSettings.Mode != PlayTagGameMode.PlayTagMode.Modes
+          && !MyPlayer.playTagCountDownOn[__instance.PlayerIndex] 
+          && MyPlayer.previousPlayTagCountDown[__instance.PlayerIndex] > MyPlayer.playTagCountDown[__instance.PlayerIndex])
       {
-        orig(self, wrapped);
+        return;
       }
+      //todo test without origin(self)!
 
-      if (MyPlayer.playTag[self.PlayerIndex])
+      if (MyPlayer.playTag[__instance.PlayerIndex])
       {
-        MyPlayer.PlayTagHUDRender(self);
+        MyPlayer.PlayTagHUDRender(__instance);
       }
     }
 
@@ -104,39 +136,49 @@ namespace TFModFortRiseGameModePlaytag
     }
 
 
-    public static void HurtBouncedOn_patch(On.TowerFall.Player.orig_HurtBouncedOn orig, TowerFall.Player self, int bouncerIndex)
+    public static bool HurtBouncedOn_patch(Player __instance, int bouncerIndex)
     {
-      if (MyPlayer.playTagCountDownOn[self.PlayerIndex])
-        return;
-      orig(self, bouncerIndex);
+      if (MyPlayer.playTagCountDownOn[__instance.PlayerIndex])
+        return false; //don't execute the original die function
+      return true;
     }
 
-    public static void Update(On.TowerFall.Player.orig_Update orig, global::TowerFall.Player self)
+    public static void Update(Player __instance)
     {
-      orig(self);
-      if (MyPlayer.playTagCountDownOn[self.PlayerIndex])
+      if (MyPlayer.playTagCountDownOn[__instance.PlayerIndex])
       {
-        self.Aiming = false; 
+        __instance.Aiming = false; 
         int delay;
-        if (self.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlayTag>()) {
-          delay = TFModFortRiseGameModePlaytagModule.Settings.playTagDelayModePlayTag;
-          
+        //if (__instance.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlayTag>()) {
+        if (__instance.Level.Session.MatchSettings.Mode != PlayTagGameMode.PlayTagMode.Modes) { 
+            delay = TFModFortRiseGameModePlaytagModule.Settings.playTagDelayModePlayTag;
         } else {
           delay = TFModFortRiseGameModePlaytagModule.Settings.playTagDelayPickup;
         }
-        MyPlayer.previousPlayTagCountDown[self.PlayerIndex] = MyPlayer.playTagCountDown[self.PlayerIndex];
-        MyPlayer.playTagCountDown[self.PlayerIndex] = delay - (int)(DateTime.Now - MyPlayer.creationTime[self.PlayerIndex]).TotalSeconds + MyPlayer.pauseDuration[self.PlayerIndex];
+        MyPlayer.previousPlayTagCountDown[__instance.PlayerIndex] = MyPlayer.playTagCountDown[__instance.PlayerIndex];
+        MyPlayer.playTagCountDown[__instance.PlayerIndex] = delay - (int)(DateTime.Now - MyPlayer.creationTime[__instance.PlayerIndex]).TotalSeconds + MyPlayer.pauseDuration[__instance.PlayerIndex];
       }
     }
 
-    public static PlayerCorpse Die_DeathCause_int_bool_bool_patch(On.TowerFall.Player.orig_Die_DeathCause_int_bool_bool orig, global::TowerFall.Player self, DeathCause deathCause, int killerIndex, bool brambled, bool laser)
+    //public static bool Die_DeathCause_int_bool_bool_prefix_patch(Player __instance, DeathCause deathCause, int killerIndex, bool brambled, bool laser)
+    //{
+    //  // can't die when playtag
+    //  if (deathCause == DeathCause.JumpedOn)
+    //  {
+    //    if (MyPlayer.playTagCountDownOn[__instance.PlayerIndex])
+    //      return false;  //don't execute the original die function
+    //  }
+
+    //  return true;
+    //}
+
+    public static void Die_DeathCause_int_bool_bool_postfix_patch(Player __instance, DeathCause deathCause, int killerIndex, bool brambled, bool laser)
     {
       //stop playtag if Tag player is killed before countdown reach 0
       //test when killed by the explosion
-      if (MyPlayer.playTag[self.PlayerIndex]){
-        TFModFortRiseGameModePlaytagModule.EndPlayTag(self);
+      if (MyPlayer.playTag[__instance.PlayerIndex]){
+        TFModFortRiseGameModePlaytagModule.EndPlayTag(__instance);
       }
-      return orig(self, deathCause, killerIndex, brambled, laser);
     }
   }
 }

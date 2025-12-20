@@ -1,7 +1,13 @@
 {
 	"name": "PlayTag",
-	"version": "0.0.4",
+	"version": "1.0.4",
 	"author": "ebe1.kenobi",
 	"description": "PlayTag game mode and new pickup to start a playtag",
-	"dll": "TFModFortRiseGameModePlaytag.dll"
+	"dll": "TFModFortRiseGameModePlaytag.dll",
+	"dependencies": [
+		{
+			"name": "FortRise",
+			"version": "5.0.0"
+		}
+	]
 }

@@ -1,74 +1,107 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using FortRise;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Monocle;
 using MonoMod.ModInterop;
 using TowerFall;
 
+
+//todo when tag pass on other player, count is not the same
 namespace TFModFortRiseGameModePlaytag
 {
-  [Fort("com.ebe1.kenobi.tfmodfortrisegamemodeplaytag", "TFModFortRiseGameModePlaytag")]
-  public class TFModFortRiseGameModePlaytagModule : FortModule
+  public class TFModFortRiseGameModePlaytagModule : Mod
   {
     public static TFModFortRiseGameModePlaytagModule Instance;
+
+    private static Type[] Registerables = [
+        typeof(PlayTagPickup),
+        typeof(PlayTagGameMode),
+        typeof(TextureRegistry),
+        typeof(Variants)
+
+    ];
+    internal Type[] Hookables = [
+        typeof(MyLevel),
+        typeof(MyPauseMenu),
+        //typeof(MyPickup),
+        typeof(MyPlayer),
+        typeof(MyTreasureSpawner),
+        typeof(MyRoundLogic),
+    ];
+
     public static Counter pause = new Counter();
     public static String currentSong;
     public static Player currentPlayer;
     public static float currentTimerate;
-    
 
-    public override Type SettingsType => typeof(TFModFortRiseGameModePlaytagSettings);
-    public static TFModFortRiseGameModePlaytagSettings Settings => (TFModFortRiseGameModePlaytagSettings)Instance.InternalSettings;
+    public static TFModFortRiseGameModePlaytagSettings Settings => Instance.GetSettings<TFModFortRiseGameModePlaytagSettings>()!;
 
-    public TFModFortRiseGameModePlaytagModule() 
+    public TFModFortRiseGameModePlaytagModule(IModContent content, IModuleContext context, ILogger logger) : base(content, context, logger)
     {
+      if (!Debugger.IsAttached)
+      {
+        //Debugger.Launch(); // Proposera d’attacher Visual Studio
+      }
       Instance = this;
-      //Logger.Init("Playtag");
+      TFModFortRiseGameModePlaytag.Logger.Init("Playtag");
+
+      foreach (var hookable in Hookables)
+      {
+        hookable.GetMethod(nameof(IHookable.Load))!.Invoke(null, [context.Harmony]);
+      }
+
+      foreach (var registerable in Registerables)
+      {
+        registerable.GetMethod(nameof(IRegisterable.Register))!.Invoke(null, [content, context.Registry]);
+      }
     }
 
-    public override void LoadContent()
+    public override ModuleSettings CreateSettings()
     {
+      return new TFModFortRiseGameModePlaytagSettings();
     }
 
     public static bool activated()
     {
-      return VariantManager.GetCustomVariant("PlayTag") || Settings.playTagPickupActivated;
+      return Variants.PlayTag.IsActive() || Settings.playTagPickupActivated;
     }
 
-    public override void OnVariantsRegister(VariantManager manager, bool noPerPlayer = false)
-    {
+    //public override void OnVariantsRegister(VariantManager manager, bool noPerPlayer = false)
+    //{
       
-      var icon = new CustomVariantInfo(
-          "PlayTag", TFGame.MenuAtlas["variants/stealthArchers"],
-          CustomVariantFlags.None
-          );
-      manager.AddVariant(icon);
-    }
+    //  var icon = new CustomVariantInfo(
+    //      "PlayTag", TFGame.MenuAtlas["variants/stealthArchers"],
+    //      CustomVariantFlags.None
+    //      );
+    //  manager.AddVariant(icon);
+    //}
 
-    public override void Load()
-    {
-      MyPlayer.Load();
-      PlaytagRoundLogic.Load();
-      MyTreasureSpawner.Load();
-      MyPickup.Load();
-      MySession.Load();
-      MyPauseMenu.Load();
-      MyLevel.Load();
+    //public override void Load()
+    //{
+    //  MyPlayer.Load();
+    //  PlaytagRoundLogic.Load();
+    //  MyTreasureSpawner.Load();
+    //  MyPickup.Load();
+    //  MySession.Load();
+    //  MyPauseMenu.Load();
+    //  MyLevel.Load();
 
-      typeof(ModExports).ModInterop();
-    }
+    //  typeof(ModExports).ModInterop();
+    //}
 
-    public override void Unload()
-    {
-      MyPlayer.Unload();
-      PlaytagRoundLogic.Unload();
-      MyTreasureSpawner.Unload();
-      MyPickup.Unload();
-      MySession.Unload();
-      MyPauseMenu.Unload();
-      MyLevel.Unload();
-    }
+    //public override void Unload()
+    //{
+    //  MyPlayer.Unload();
+    //  PlaytagRoundLogic.Unload();
+    //  MyTreasureSpawner.Unload();
+    //  MyPickup.Unload();
+    //  MySession.Unload();
+    //  MyPauseMenu.Unload();
+    //  MyLevel.Unload();
+    //}
     //public override void OnVariantsRegister(VariantManager manager, bool noPerPlayer = false)
     //{
     //  var info1x1 = new CustomVariantInfo(
@@ -135,11 +168,11 @@ namespace TFModFortRiseGameModePlaytag
     }
   }
 
-  [ModExportName("com.fortrise.TFModFortRiseGameModePlaytag")]
-  public static class ModExports
-  {
-    public static bool IsGameModePlayTag(Modes mode) => mode == ModRegisters.GameModeType<PlayTag>();
-    public static bool IsPlayTagCountDownOn(int playerIndex) => MyPlayer.playTagCountDownOn[playerIndex];
-    public static bool IsPlayerPlayTag(int playerIndex) => MyPlayer.playTag[playerIndex];
-  }
+  //[ModExportName("com.fortrise.TFModFortRiseGameModePlaytag")]  //TODO
+  //public static class ModExports
+  //{
+  //  public static bool IsGameModePlayTag(Modes mode) => mode == ModRegisters.GameModeType<PlayTag>();
+  //  public static bool IsPlayTagCountDownOn(int playerIndex) => MyPlayer.playTagCountDownOn[playerIndex];
+  //  public static bool IsPlayerPlayTag(int playerIndex) => MyPlayer.playTag[playerIndex];
+  //}
 }

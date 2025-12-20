@@ -14,22 +14,22 @@ namespace TFModFortRiseGameModePlaytag
     private static int currentPlayerOrderIndex;
     private static int lastNumberOfPlayer = 0;
 
-    internal static void Load()
-    {
-      On.TowerFall.RoundLogic.FFACheckForAllButOneDead += FFACheckForAllButOneDead_patch;
-    }
+    //internal static void Load()
+    //{
+    //  On.TowerFall.RoundLogic.FFACheckForAllButOneDead += FFACheckForAllButOneDead_patch;
+    //}
 
-    internal static void Unload()
-    {
-      On.TowerFall.RoundLogic.FFACheckForAllButOneDead -= FFACheckForAllButOneDead_patch;
-    }
+    //internal static void Unload()
+    //{
+    //  On.TowerFall.RoundLogic.FFACheckForAllButOneDead -= FFACheckForAllButOneDead_patch;
+    //}
 
-    private static bool FFACheckForAllButOneDead_patch(On.TowerFall.RoundLogic.orig_FFACheckForAllButOneDead orig, RoundLogic self)
-    {
-      if (self is PlaytagRoundLogic)
-        return false;
-      return orig(self);
-    }
+    //private static bool FFACheckForAllButOneDead_patch(On.TowerFall.RoundLogic.orig_FFACheckForAllButOneDead orig, RoundLogic self)
+    //{
+    //  if (self is PlaytagRoundLogic)
+    //    return false;
+    //  return orig(self);
+    //}
 
     public PlaytagRoundLogic(Session session) : base(session, true)
     {

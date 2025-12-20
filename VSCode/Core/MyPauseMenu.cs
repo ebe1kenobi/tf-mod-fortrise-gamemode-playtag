@@ -1,36 +1,43 @@
 ﻿using System;
+using FortRise;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using TowerFall;
 using static TowerFall.PauseMenu;
 
 namespace TFModFortRiseGameModePlaytag
 {
-  public class MyPauseMenu
+  public class MyPauseMenu : IHookable
   {
     public static DateTime creationTime;
     public static Level mylevel;
 
-    internal static void Load()
+    public static void Load(IHarmony harmony)
     {
-      On.TowerFall.PauseMenu.ctor += ctor_patch;
-      On.TowerFall.PauseMenu.Resume += Resume_patch;
-    }
+      harmony.Patch(
+          AccessTools.DeclaredConstructor(typeof(PauseMenu), [
+                                                              typeof(Level),
+                                                              typeof(Vector2),
+                                                              typeof(MenuType),
+                                                              typeof(int)
+                                                                    ]),
+          postfix: new HarmonyMethod(ctor_patch)
+      );
+      harmony.Patch(
+          AccessTools.DeclaredMethod(typeof(PauseMenu), "Resume"),
+          prefix: new HarmonyMethod(Resume_patch)
+      );
 
-    internal static void Unload()
-    {
-      On.TowerFall.PauseMenu.ctor -= ctor_patch;
-      On.TowerFall.PauseMenu.Resume -= Resume_patch;
     }
 
     public MyPauseMenu() {}
 
-    public static void ctor_patch(On.TowerFall.PauseMenu.orig_ctor origin, PauseMenu self, Level level, Vector2 position, MenuType menuType, int controllerDisconnected = -1) {
-      origin(self, level, position, menuType, controllerDisconnected);
+    public static void ctor_patch(PauseMenu __instance, Level level, Vector2 position, MenuType menuType, int controllerDisconnected = -1) {
       mylevel = level; 
       creationTime = DateTime.Now;
     }
 
-    public static void Resume_patch(On.TowerFall.PauseMenu.orig_Resume origin, PauseMenu self)
+    public static void Resume_patch(PauseMenu __instance)
     {
       int pauseDuration = (int)(DateTime.Now - creationTime).TotalSeconds;
 
@@ -42,7 +49,6 @@ namespace TFModFortRiseGameModePlaytag
           MyPlayer.pauseDuration[p.PlayerIndex] += pauseDuration;
         }
       }
-      origin(self);
     }
   }
 }
