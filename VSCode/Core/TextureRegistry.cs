@@ -8,12 +8,16 @@ namespace TFModFortRiseGameModePlaytag;
 public class TextureRegistry : IRegisterable
 {
     // Variants
-    public static ISubtextureEntry PlayTag { get; private set; } = null!;
+    public static ISubtextureEntry PlayTagGameMode { get; private set; } = null!;
+    public static ISubtextureEntry PlayTagVariant { get; private set; } = null!;
 
     public static void Register(IModContent content, IModRegistry registry)
     {
-    PlayTag = registry.Subtextures.RegisterTexture(
-                content.Root.GetRelativePath("Content/Atlas/playtag.png")
+    PlayTagVariant = registry.Subtextures.RegisterTexture(
+                content.Root.GetRelativePath("Content/Atlas/variant.png")
             );
-    }
+    PlayTagGameMode = registry.Subtextures.RegisterTexture(
+                content.Root.GetRelativePath("Content/Atlas/gamemode.png")
+            );
+  }
 }

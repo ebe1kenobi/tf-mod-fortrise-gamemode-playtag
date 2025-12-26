@@ -10,7 +10,7 @@ namespace TFModFortRiseGameModePlaytag
     public string Name => "PlayTag";
     public Color NameColor => Color.LightPink;
     public ISubtextureEntry Icon => PlayTagIcon;
-    public ISubtextureEntry PlayTagIcon => TextureRegistry.PlayTag; // todo add TFGame.MenuAtlas["gameModes/warlord"]
+    public ISubtextureEntry PlayTagIcon => TextureRegistry.PlayTagGameMode; // todo add TFGame.MenuAtlas["gameModes/warlord"]
     public static IVersusGameModeEntry PlayTagMode { get; private set; } = null!;
     public bool IsTeamMode => false;
 

@@ -12,7 +12,7 @@ namespace TFModFortRiseGameModePlaytag
       {
         Title = "PlayTag",
         Flags = CustomVariantFlags.None,
-        Icon = TextureRegistry.PlayTag
+        Icon = TextureRegistry.PlayTagVariant
       });
     }
   }
