@@ -44,10 +44,14 @@ namespace TFModFortRiseGameModePlaytag
 
     public static void Register(IModContent content, IModRegistry registry)
     {
+      // FortRise 5.3.3+ : PickupConfiguration exige une fabrique CreatePickup
+      // (Func<CreatePickupArgs, Pickup>). Auparavant le registre instanciait
+      // lui-meme le type via un constructeur (Vector2, Vector2).
       PlayTagMeta = registry.Pickups.RegisterPickups("PlayTagPickup", new()
       {
         Name = "PlayTagPickup",
-        PickupType = typeof(PlayTagPickup)
+        PickupType = typeof(PlayTagPickup),
+        CreatePickup = args => new PlayTagPickup(args.Position, args.TargetPosition)
       });
     }
 
