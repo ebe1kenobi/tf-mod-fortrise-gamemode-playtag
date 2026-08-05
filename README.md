@@ -1,43 +1,55 @@
-todo : when tag died with arrow -> deactivate Tag mode
-Port to FortRise of PlayTag Mod https://github.com/ebe1kenobi/tf-mod-playtag
+# PlayTag
 
-* WiderSetMod supported
+**PlayTag** game mode: one player carries the bomb and has to pass it on by
+touching someone else. Once the delay runs out, the bomb explodes and kills whoever
+holds it. The mod also adds a pickup that hands the bomb over.
 
+A mod for **FortRise 5** (>= 5.3.3). The FortRise 4 version (`tf-mod-fortrise-gamemode-playtag`) is no longer maintained: fixes and new features only land in this repository.
 
-# PlayTag mod
+## Installation
 
+1. Install FortRise 5 and start the game through `FortRise.exe`.
+2. Copy `release/playtag` (or the shipped folder) into `<TowerFall>/FortRise/Mods/`.
 
-![playtag4](https://github.com/user-attachments/assets/c5ce717c-76d5-437c-b0e2-179f73a89bf5)
+Settings are under **Options > Mods > PlayTag**.
+Data and log files live in `<TowerFall>/FortRise/Saves/PlayTag/` and `<TowerFall>/FortRise/Logs/`.
 
+## Usage
 
-![image](https://github.com/user-attachments/assets/34584c87-a5d5-4e40-97d4-14b6521a6f75)
+Pick the **PlayTag** mode on the versus screen (left/right on the mode button), then
+start the match as usual.
 
+> **Opening the popup**: on the versus screen, with the relevant mode selected,
+> press **Y** (the "arrows" button on the controller) on the mode button. A hint is
+> shown under the button. The popup locks the menu while it is open (no going back,
+> no starting the match); **A** or **B** closes it.
 
+The PlayTag popup sets the **explosion delay**:
 
-A new Game Mod to Play tag. Each round a player has It, and it must touch another player to pass It. All the player alive at the end of the round gain 1 point.
-- No Arrow
-- No kill on stomping
-- Treasure chest will not give Arrows
-- the player can be killed by the environment
+| Input | Effect |
+|-------|--------|
+| Left / Right | -1 s / +1 s |
+| Up / Down | +5 s / -5 s |
+| A or B | close |
 
-In other versus mode, a treasure chest can give a hidden Play Tag item in the form of other items (arrow, orb, ...), you can't know if it is it or not :) It will spawn only once per match.
-When a Player will take the false items, the playtag mode will activate for 20 seconds, then the normal mode will be back.
+It writes to the `Delay Game Mode` setting, so the value is kept between sessions.
 
-You can set the delay of each countdown in the mods options, and choose if you want the playtag pickup to appear in the chest.
+## Settings
 
-![image](https://github.com/user-attachments/assets/14881921-f373-467f-85b5-6014967471a7)
+| Setting | Purpose |
+|---------|---------|
+| Pickup activated even when variant is not selected | spawn the pickup even when the variant is unticked |
+| Treasure Rate 1 chance on N | pickup spawn odds: 1 chance in N |
+| Delay Pickup | bomb delay when it comes from the pickup |
+| Delay Game Mode | bomb delay in PlayTag mode (also set from the popup) |
+| Periodicity | `Normal` (random roll) or `Test` (every level) |
 
-# Acknowledgements
+## Build / deployment
 
-- [Extremely OK Games](https://exok.com), for making this awesome, lovely game.
+| Script | Purpose |
+|--------|---------|
+| `script/release.bat` | build, then assemble into `release/` |
+| `script/deploy.bat` | copy `release/` into the TowerFall `Mods` folder |
+| `script/release_deploy.bat` | both, one after the other |
 
-- The developer of [Bartizan](https://github.com/Kha/Bartizan#installation), from where I borrowed the basic code for patching.
-- The developer [vcanaa](https://github.com/vcanaa) of [towerfall_ai]([https://github.com/vcanaa](https://github.com/TowerfallAi/towerfall-ai))
-- The developer [Jonesey13](https://github.com/Jonesey13) : [https://github.com/TowerfallAi/towerfall-ai](https://github.com/Jonesey13/TF-8-Player)
-
-- Matt Thorson and everybody else who contributed to making such an awesome game!
-- Everybody who worked on the Bartizan project which allowed the mod to be open-sourceable
-- All those who worked on Mono.Cecil
-- Alec Gibson for suggesting that someone should make this mod in the first place
-- Everybody at Softwire and RCVGS who tested the earlier versions of the mod
-
+Paths (game folder, module name) are set in `script/config.bat`.
