@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using FortRise;
@@ -47,7 +47,7 @@ namespace TFModFortRiseGameModePlaytag
         //Debugger.Launch(); // Proposera d’attacher Visual Studio
       }
       Instance = this;
-      TFModFortRiseGameModePlaytag.Logger.Init("Playtag");
+      TFModFortRiseGameModePlaytag.Logger.Init(Meta.Name);
 
       foreach (var hookable in Hookables)
       {
