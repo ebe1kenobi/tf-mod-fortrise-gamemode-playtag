@@ -25,6 +25,7 @@ namespace TFModFortRiseGameModePlaytag
     ];
     internal Type[] Hookables = [
         typeof(MyLevel),
+        typeof(MyVersusModeButton),
         typeof(MyPauseMenu),
         //typeof(MyPickup),
         typeof(MyPlayer),
