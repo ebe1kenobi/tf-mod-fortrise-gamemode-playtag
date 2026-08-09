@@ -50,6 +50,11 @@ namespace TFModFortRiseGameModePlaytag
     public override void Removed()
     {
       base.Removed();
+
+      // Les reglages ne sont ecrits sur disque qu'en sortant du menu Options du
+      // jeu : sans cet appel, une valeur changee ici serait perdue en quittant.
+      TFModFortRiseGameModePlaytagModule.SaveSettingsNow();
+
       if (Current == this)
         Current = null;
 

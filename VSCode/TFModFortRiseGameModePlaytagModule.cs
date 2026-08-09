@@ -40,6 +40,32 @@ namespace TFModFortRiseGameModePlaytag
 
     public static TFModFortRiseGameModePlaytagSettings Settings => Instance.GetSettings<TFModFortRiseGameModePlaytagSettings>()!;
 
+    /// <summary>
+    /// Ecrit les reglages sur disque immediatement.
+    ///
+    /// FortRise ne les sauvegarde qu'en quittant le menu Options du jeu
+    /// (MainMenu.DestroyOptions) ou lors d'une sauvegarde de partie. Une valeur
+    /// changee depuis une popup du mod restait donc en memoire et etait perdue en
+    /// quittant le jeu. SaveSettings est internal cote FortRise, d'ou la reflexion.
+    /// </summary>
+    public static void SaveSettingsNow()
+    {
+      if (Instance == null)
+        return;
+
+      try
+      {
+        var method = typeof(Mod).GetMethod("SaveSettings",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (method != null)
+          method.Invoke(Instance, null);
+      }
+      catch (Exception ex)
+      {
+        TFModFortRiseGameModePlaytag.Logger.Info($"[Settings] sauvegarde immediate impossible : {ex.Message}");
+      }
+    }
+
     public TFModFortRiseGameModePlaytagModule(IModContent content, IModuleContext context, ILogger logger) : base(content, context, logger)
     {
       if (!Debugger.IsAttached)

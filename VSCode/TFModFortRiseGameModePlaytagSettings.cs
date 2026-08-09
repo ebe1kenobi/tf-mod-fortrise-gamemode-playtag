@@ -1,4 +1,4 @@
-﻿using System.Configuration;
+using System.Configuration;
 using FortRise;
 
 namespace TFModFortRiseGameModePlaytag
@@ -6,12 +6,16 @@ namespace TFModFortRiseGameModePlaytag
   public class TFModFortRiseGameModePlaytagSettings: ModuleSettings
   {
 
+
+    // FortRise n'ecrit les reglages qu'en SORTANT du menu Options
+    // (MainMenu.DestroyOptions) : quitter le jeu depuis ce menu perdait la
+    // modification. Chaque changement declenche donc une sauvegarde immediate.
     public override void Create(ISettingsCreate settings)
     {
       settings.CreateOnOff("Pickup activated even \n\nwhen variant is not selected", playTagPickupActivated, (x) => playTagPickupActivated = x);
-      settings.CreateNumber("Treasure Rate 1 chance on N, choose N", treasureRate, (x) => treasureRate = x, 0, 100);
-      settings.CreateNumber("Delay Pickup", playTagDelayPickup, (x) => playTagDelayPickup = x, 1, 60);
-      settings.CreateNumber("Delay Game Mode", playTagDelayModePlayTag, (x) => playTagDelayModePlayTag = x, 0, 60);
+      settings.CreateNumber("Treasure Rate 1 chance on N, choose N", treasureRate, (x) => { treasureRate = x; TFModFortRiseGameModePlaytagModule.SaveSettingsNow(); }, 0, 100);
+      settings.CreateNumber("Delay Pickup", playTagDelayPickup, (x) => { playTagDelayPickup = x; TFModFortRiseGameModePlaytagModule.SaveSettingsNow(); }, 1, 60);
+      settings.CreateNumber("Delay Game Mode", playTagDelayModePlayTag, (x) => { playTagDelayModePlayTag = x; TFModFortRiseGameModePlaytagModule.SaveSettingsNow(); }, 0, 60);
       settings.CreateOptions("Periodicity", periodicity, ["Normal", "Test"], (x) => periodicity = x.Item1);
 
     }

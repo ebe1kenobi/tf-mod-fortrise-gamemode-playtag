@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using FortRise;
 using HarmonyLib;
@@ -28,6 +28,7 @@ namespace TFModFortRiseGameModePlaytag
       );
       harmony.Patch(
           AccessTools.DeclaredMethod(typeof(Player), nameof(Player.HUDRender)),
+          prefix: new HarmonyMethod(HUDRender_prefix_patch),
           postfix: new HarmonyMethod(HUDRender_patch)
       );
       harmony.Patch(
@@ -103,8 +104,32 @@ namespace TFModFortRiseGameModePlaytag
         MyPlayer.playTag[b.PlayerIndex] = false;
       }
     }
+    /// <summary>
+    /// Masque le compteur de fleches pendant un match PlayTag : le decompte de la
+    /// bombe s'affiche au meme endroit, au-dessus de l'archer, et les deux se
+    /// chevauchaient.
+    ///
+    /// Il ne suffit pas de mettre ArrowHUD.Visible a false : Player.HUDRender appelle
+    /// ArrowHUD.Render() directement, sans jamais consulter Visible. On saute donc la
+    /// methode entiere et on rend l'indicateur de joueur nous-memes, puisque c'est
+    /// l'autre chose qu'elle affichait.
+    /// </summary>
+    public static bool HUDRender_prefix_patch(Player __instance, bool wrapped)
+    {
+      if (__instance == null || __instance.Level == null || __instance.Level.Session == null)
+        return true;
+      if (__instance.Level.Session.MatchSettings.Mode != PlayTagGameMode.PlayTagMode.Modes)
+        return true;
+
+      if (!wrapped && __instance.Indicator != null)
+        __instance.Indicator.Render();
+
+      return false;
+    }
+
     public static void HUDRender_patch(Player __instance, bool wrapped)
     {
+
       if (!MyPlayer.playTagCountDownOn[__instance.PlayerIndex] && 
           //__instance.Level.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlayTag>())
         __instance.Level.Session.MatchSettings.Mode != PlayTagGameMode.PlayTagMode.Modes)
@@ -129,10 +154,9 @@ namespace TFModFortRiseGameModePlaytag
 
     public static void PlayTagHUDRender(TowerFall.Player self)
     {
+      // L'indicateur de joueur est deja rendu : par Player.HUDRender hors mode
+      // PlayTag, par notre prefix dedans. Le redessiner ici le doublait.
       MyPlayer.PlayTagHUD[self.PlayerIndex].Render();
-      if (!(bool)(Monocle.Component)self.Indicator)
-        return;
-      self.Indicator.Render();
     }
 
 
@@ -148,11 +172,21 @@ namespace TFModFortRiseGameModePlaytag
       if (MyPlayer.playTagCountDownOn[__instance.PlayerIndex])
       {
         __instance.Aiming = false; 
+        // En mode PlayTag c'est le delai du mode qui s'applique ; ailleurs, la bombe
+        // vient de l'objet a ramasser, donc son propre delai.
+        //
+        // La comparaison etait inversee (!= au lieu de ==) : en mode PlayTag le jeu
+        // lisait le delai du pickup, si bien que le reglage du mode - celui de la
+        // popup comme celui des options - n'avait aucun effet. La ligne d'origine
+        // conservee en commentaire ci-dessous utilisait bien ==.
         int delay;
         //if (__instance.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlayTag>()) {
-        if (__instance.Level.Session.MatchSettings.Mode != PlayTagGameMode.PlayTagMode.Modes) { 
-            delay = TFModFortRiseGameModePlaytagModule.Settings.playTagDelayModePlayTag;
-        } else {
+        if (__instance.Level.Session.MatchSettings.Mode == PlayTagGameMode.PlayTagMode.Modes)
+        {
+          delay = TFModFortRiseGameModePlaytagModule.Settings.playTagDelayModePlayTag;
+        }
+        else
+        {
           delay = TFModFortRiseGameModePlaytagModule.Settings.playTagDelayPickup;
         }
         MyPlayer.previousPlayTagCountDown[__instance.PlayerIndex] = MyPlayer.playTagCountDown[__instance.PlayerIndex];

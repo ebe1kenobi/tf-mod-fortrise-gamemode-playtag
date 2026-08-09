@@ -33,6 +33,18 @@ The PlayTag popup sets the **explosion delay**:
 | A or B | close |
 
 It writes to the `Delay Game Mode` setting, so the value is kept between sessions.
+Every change is saved to disk immediately: FortRise only saves settings when leaving
+the game's Options menu, so a value changed here — or right before quitting — used
+to be lost.
+
+The two delays apply to different situations, and each is used where it belongs:
+`Delay Game Mode` during a PlayTag match, `Delay Pickup` for a bomb picked up in a
+normal versus.
+
+### On-screen display
+
+The bomb countdown is drawn above the archer holding it. During a PlayTag match the
+**arrow counter is hidden**, since it occupies the same spot and the two overlapped.
 
 ## Settings
 
