@@ -56,6 +56,39 @@ The bomb countdown is drawn above the archer holding it. During a PlayTag match 
 | Delay Game Mode | bomb delay in PlayTag mode (also set from the popup) |
 | Periodicity | `Normal` (random roll) or `Test` (every level) |
 
+## Game mode icon
+
+The mode has its own icon, at the size of the game's four (184x82) and in their
+style - a silhouette in three shades of one colour, no black: two archers, one of them marked.
+
+It used to be borrowed from WARLORD's head, cropped. Two modes sharing
+one picture cannot be told apart in the list.
+
+The file is `ModFile/Content/Atlas/gamemode.png`.
+
+## API for other mods
+
+The mod exposes `IPlayTagApi`, so another mod can tell a tag match from a deathmatch
+and know who is carrying the tag:
+
+| Member | Answers |
+|--------|---------|
+| `IsPlayTagMatch()` | is the **running** match a tag match |
+| `IsTagged(playerIndex)` | is this player carrying the tag |
+| `TaggedPlayer()` | which player is, or `-1` |
+
+`IsPlayTagMatch` reads the *level's* session and not the menu settings: the latter
+describe what will be launched next time, not what is being played. The typical
+caller - an AI, mid-match - needs the second answer.
+
+It is used by **AIJimmy**, which flees the tagged player instead of chasing the
+nearest one. Without it the AI played a deathmatch in the middle of a tag match,
+charging at the player who was chasing it.
+
+Members will be added in **separate interfaces**, never on this one: mod interop
+builds its proxy from the *shape* of the members, so a caller declaring a member the
+installed version does not have gets nothing at all.
+
 ## Build / deployment
 
 | Script | Purpose |

@@ -73,7 +73,7 @@ namespace TFModFortRiseGameModePlaytag
         //Debugger.Launch(); // Proposera d’attacher Visual Studio
       }
       Instance = this;
-      TFModFortRiseGameModePlaytag.Logger.Init(Meta.Name);
+      TFModFortRiseGameModePlaytag.Logger.Init(logger);
 
       foreach (var hookable in Hookables)
       {
@@ -84,6 +84,15 @@ namespace TFModFortRiseGameModePlaytag
       {
         registerable.GetMethod(nameof(IRegisterable.Register))!.Invoke(null, [content, context.Registry]);
       }
+    }
+
+    /// <summary>
+    /// Ce que les autres mods peuvent savoir d'une partie de chat : si elle est en
+    /// cours, et qui porte le chat. L'IA en a besoin pour FUIR au lieu de foncer.
+    /// </summary>
+    public override object GetApi()
+    {
+      return new ApiImplementation();
     }
 
     public override ModuleSettings CreateSettings()
