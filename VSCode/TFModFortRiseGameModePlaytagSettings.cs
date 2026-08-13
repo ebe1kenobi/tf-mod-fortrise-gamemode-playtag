@@ -13,7 +13,11 @@ namespace TFModFortRiseGameModePlaytag
     public override void Create(ISettingsCreate settings)
     {
       settings.CreateOnOff("Pickup activated even \n\nwhen variant is not selected", playTagPickupActivated, (x) => playTagPickupActivated = x);
-      settings.CreateNumber("Treasure Rate 1 chance on N, choose N", treasureRate, (x) => { treasureRate = x; TFModFortRiseGameModePlaytagModule.SaveSettingsNow(); }, 0, 100);
+      // Meme echelle que les quatre mods a pickup : des crans nommes d'apres les
+      // objets du jeu plutot qu'un "1 chance sur N" maison, qui ignorait les
+      // variantes et le jeu d'objets de la tour.
+      settings.CreateOptions("Treasure rate", Rarity.LabelOf(treasureRarity), Rarity.Labels,
+          (x) => { treasureRarity = x.Item2; TFModFortRiseGameModePlaytagModule.SaveSettingsNow(); });
       settings.CreateNumber("Delay Pickup", playTagDelayPickup, (x) => { playTagDelayPickup = x; TFModFortRiseGameModePlaytagModule.SaveSettingsNow(); }, 1, 60);
       settings.CreateNumber("Delay Game Mode", playTagDelayModePlayTag, (x) => { playTagDelayModePlayTag = x; TFModFortRiseGameModePlaytagModule.SaveSettingsNow(); }, 0, 60);
       settings.CreateOptions("Periodicity", periodicity, ["Normal", "Test"], (x) => periodicity = x.Item1);
@@ -23,9 +27,18 @@ namespace TFModFortRiseGameModePlaytag
     //[SettingsName("Pickup activated even \n\nwhen variant is not selected")]
     public bool playTagPickupActivated { get; set; } = false;
 
-    //[SettingsName("Treasure Rate 1 chance on N, choose N")]
-    //[SettingsNumber(10, 100)]
+    /// <summary>
+    /// Ancien taux "1 chance sur N". Conserve pour que les fichiers de sauvegarde
+    /// deja ecrits restent lisibles - System.Text.Json ne sait pas ignorer une
+    /// propriete disparue, il leve.
+    /// </summary>
     public int treasureRate { get; set; } = 100;
+
+    /// <summary>
+    /// Le cran d'apparition, index dans Rarity.Steps. Le defaut est celui de la
+    /// bombe, l'objet rare du jeu.
+    /// </summary>
+    public int treasureRarity { get; set; } = Rarity.Default;
 
     //[SettingsName("Delay Pickup")]
     //[SettingsNumber(1, 60)]

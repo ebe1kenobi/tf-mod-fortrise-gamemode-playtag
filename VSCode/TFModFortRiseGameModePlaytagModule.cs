@@ -20,8 +20,8 @@ namespace TFModFortRiseGameModePlaytag
         typeof(PlayTagPickup),
         typeof(PlayTagGameMode),
         typeof(TextureRegistry),
-        typeof(Variants)
-
+        typeof(Variants),
+        typeof(TreasureRates)
     ];
     internal Type[] Hookables = [
         typeof(MyLevel),
@@ -29,6 +29,8 @@ namespace TFModFortRiseGameModePlaytag
         typeof(MyPauseMenu),
         //typeof(MyPickup),
         typeof(MyPlayer),
+        typeof(MyArrowHUD),
+        typeof(MyVariantToggle),
         typeof(MyTreasureSpawner),
         typeof(MyRoundLogic),
     ];

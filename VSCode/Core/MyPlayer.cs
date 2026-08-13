@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FortRise;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
+using Monocle;
 using TowerFall;
 using static TowerFall.Player;
 
@@ -25,11 +26,6 @@ namespace TFModFortRiseGameModePlaytag
                                                             typeof(bool)
                                                                         ]),
           postfix: new HarmonyMethod(ctor_patch)
-      );
-      harmony.Patch(
-          AccessTools.DeclaredMethod(typeof(Player), nameof(Player.HUDRender)),
-          prefix: new HarmonyMethod(HUDRender_prefix_patch),
-          postfix: new HarmonyMethod(HUDRender_patch)
       );
       harmony.Patch(
           AccessTools.DeclaredMethod(typeof(Player), "PlayerOnPlayer"),
@@ -105,61 +101,6 @@ namespace TFModFortRiseGameModePlaytag
       }
     }
     /// <summary>
-    /// Masque le compteur de fleches pendant un match PlayTag : le decompte de la
-    /// bombe s'affiche au meme endroit, au-dessus de l'archer, et les deux se
-    /// chevauchaient.
-    ///
-    /// Il ne suffit pas de mettre ArrowHUD.Visible a false : Player.HUDRender appelle
-    /// ArrowHUD.Render() directement, sans jamais consulter Visible. On saute donc la
-    /// methode entiere et on rend l'indicateur de joueur nous-memes, puisque c'est
-    /// l'autre chose qu'elle affichait.
-    /// </summary>
-    public static bool HUDRender_prefix_patch(Player __instance, bool wrapped)
-    {
-      if (__instance == null || __instance.Level == null || __instance.Level.Session == null)
-        return true;
-      if (__instance.Level.Session.MatchSettings.Mode != PlayTagGameMode.PlayTagMode.Modes)
-        return true;
-
-      if (!wrapped && __instance.Indicator != null)
-        __instance.Indicator.Render();
-
-      return false;
-    }
-
-    public static void HUDRender_patch(Player __instance, bool wrapped)
-    {
-
-      if (!MyPlayer.playTagCountDownOn[__instance.PlayerIndex] && 
-          //__instance.Level.Session.MatchSettings.Mode != ModRegisters.GameModeType<PlayTag>())
-        __instance.Level.Session.MatchSettings.Mode != PlayTagGameMode.PlayTagMode.Modes)
-      {
-        return;
-      }
-
-      //if (__instance.Level.Session.MatchSettings.Mode == ModRegisters.GameModeType<PlayTag>() 
-      if (__instance.Level.Session.MatchSettings.Mode != PlayTagGameMode.PlayTagMode.Modes
-          && !MyPlayer.playTagCountDownOn[__instance.PlayerIndex] 
-          && MyPlayer.previousPlayTagCountDown[__instance.PlayerIndex] > MyPlayer.playTagCountDown[__instance.PlayerIndex])
-      {
-        return;
-      }
-      //todo test without origin(self)!
-
-      if (MyPlayer.playTag[__instance.PlayerIndex])
-      {
-        MyPlayer.PlayTagHUDRender(__instance);
-      }
-    }
-
-    public static void PlayTagHUDRender(TowerFall.Player self)
-    {
-      // L'indicateur de joueur est deja rendu : par Player.HUDRender hors mode
-      // PlayTag, par notre prefix dedans. Le redessiner ici le doublait.
-      MyPlayer.PlayTagHUD[self.PlayerIndex].Render();
-    }
-
-
     public static bool HurtBouncedOn_patch(Player __instance, int bouncerIndex)
     {
       if (MyPlayer.playTagCountDownOn[__instance.PlayerIndex])
@@ -191,7 +132,59 @@ namespace TFModFortRiseGameModePlaytag
         }
         MyPlayer.previousPlayTagCountDown[__instance.PlayerIndex] = MyPlayer.playTagCountDown[__instance.PlayerIndex];
         MyPlayer.playTagCountDown[__instance.PlayerIndex] = delay - (int)(DateTime.Now - MyPlayer.creationTime[__instance.PlayerIndex]).TotalSeconds + MyPlayer.pauseDuration[__instance.PlayerIndex];
+
+        Expire(__instance);
       }
+    }
+
+    /// <summary>
+    /// Le decompte est arrive a zero : la bombe explose sur le joueur marque.
+    ///
+    /// Ce code vivait dans le RENDU du decompte, avec l'aveu en commentaire que ce
+    /// n'etait pas sa place. Ce n'etait pas qu'inelegant : un rendu qui ne part pas -
+    /// et il ne partait plus - emportait la regle du jeu avec lui, l'archer ne mourait
+    /// jamais et la manche ne se terminait pas. Dans Update, elle s'applique que
+    /// quelqu'un regarde ou non.
+    /// </summary>
+    private static void Expire(Player player)
+    {
+      if (MyPlayer.playTagCountDown[player.PlayerIndex] > 0)
+      {
+        return;
+      }
+
+      // Seul le joueur MARQUE explose. Les autres voient juste leur decompte s'arreter.
+      if (!MyPlayer.playTag[player.PlayerIndex])
+      {
+        return;
+      }
+
+      foreach (Player p in player.Level.Session.CurrentLevel[GameTags.Player])
+      {
+        MyPlayer.playTagCountDownOn[p.PlayerIndex] = false;
+      }
+
+      Player.ShootLock = false;
+      Explosion.SpawnSuper(player.Level, player.Position, player.PlayerIndex, true);
+    }
+
+    /// <summary>
+    /// Le decompte doit-il etre dessine au-dessus de cet archer ?
+    ///
+    /// Seul le joueur marque le porte : c'est l'indicateur du mode, il dit qui a le
+    /// tag autant que le temps qui reste.
+    /// </summary>
+    public static bool ShowsCountdown(Player player)
+    {
+      if (player == null || player.Dead)
+      {
+        return false;
+      }
+
+      int index = player.PlayerIndex;
+
+      return MyPlayer.playTagCountDownOn.TryGetValue(index, out bool running) && running
+          && MyPlayer.playTag.TryGetValue(index, out bool tagged) && tagged;
     }
 
     //public static bool Die_DeathCause_int_bool_bool_prefix_patch(Player __instance, DeathCause deathCause, int killerIndex, bool brambled, bool laser)
