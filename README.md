@@ -89,6 +89,30 @@ Members will be added in **separate interfaces**, never on this one: mod interop
 builds its proxy from the *shape* of the members, so a caller declaring a member the
 installed version does not have gets nothing at all.
 
+## Where the rule lives
+
+The countdown above the tagged player is the mode's indicator: it says **who** is it and
+how long they have. When it reaches zero the bomb goes off and the round ends.
+
+That explosion used to live in the countdown's `Render`, with the admission written next
+to it - *"Yes I know, it's so bad to put that here"*. It worked as long as the countdown
+was drawn. It was drawn by a patch on `Player.HUDRender`, a three-line method - exactly
+the kind the JIT copies into its caller, in which case the patch never fires. The day it
+did, the countdown vanished **and the round stopped ending**, because the rule went with
+the drawing.
+
+Two fixes, not one:
+
+- the rule moved into `Update`, where it belongs. It now applies whether or not anyone
+  is looking;
+- the HUD component is **visible**, so Monocle draws it with the archer, instead of a
+  patch calling its `Render` by hand. No more bet on inlining.
+
+The arrow counter is hidden at the level of `ArrowHUD.Render` - the method below, big
+enough not to be copied - and not by skipping `Player.HUDRender` entirely. The Soccer mod
+does the same thing on the same method; the two coexist, each returning false only in
+its own mode.
+
 ## Build / deployment
 
 | Script | Purpose |
