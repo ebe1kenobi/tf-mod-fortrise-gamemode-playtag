@@ -1,5 +1,5 @@
 # PlayTag
-<img width="420" height="240" alt="14_100217_round_00" src="https://github.com/user-attachments/assets/e3b28ac1-84cf-4c2d-9d7e-4c6a4f3b9593" />
+<img width="640" height="400" alt="14_100217_round_00" src="https://github.com/user-attachments/assets/e3b28ac1-84cf-4c2d-9d7e-4c6a4f3b9593" />
 
 **PlayTag** game mode: one player carries the bomb and has to pass it on by
 touching someone else. Once the delay runs out, the bomb explodes and kills whoever
