@@ -27,7 +27,7 @@ start the match as usual.
 > shown under the button. The popup locks the menu while it is open (no going back,
 > no starting the match); **A** or **B** closes it.
 
-<img width="420" height="240" alt="14_100217_round_00" src="https://github.com/user-attachments/assets/b8d69957-9c20-4d08-b02c-a12bb50c4b4e" />
+
 <img width="503" height="603" alt="image" src="https://github.com/user-attachments/assets/5845f4dd-c5a8-47f1-81d8-0b7ea95d2aa0" />
 
 The PlayTag popup sets the **explosion delay**:
