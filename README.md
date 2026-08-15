@@ -1,4 +1,5 @@
 # PlayTag
+<img width="420" height="240" alt="14_100217_round_00" src="https://github.com/user-attachments/assets/e3b28ac1-84cf-4c2d-9d7e-4c6a4f3b9593" />
 
 **PlayTag** game mode: one player carries the bomb and has to pass it on by
 touching someone else. Once the delay runs out, the bomb explodes and kills whoever
@@ -16,6 +17,8 @@ Data and log files live in `<TowerFall>/FortRise/Saves/PlayTag/` and `<TowerFall
 
 ## Usage
 
+<img width="757" height="441" alt="image" src="https://github.com/user-attachments/assets/9e82f723-5779-4eb9-8581-5d11dd85f417" />
+
 Pick the **PlayTag** mode on the versus screen (left/right on the mode button), then
 start the match as usual.
 
@@ -23,6 +26,9 @@ start the match as usual.
 > press **Y** (the "arrows" button on the controller) on the mode button. A hint is
 > shown under the button. The popup locks the menu while it is open (no going back,
 > no starting the match); **A** or **B** closes it.
+
+<img width="420" height="240" alt="14_100217_round_00" src="https://github.com/user-attachments/assets/b8d69957-9c20-4d08-b02c-a12bb50c4b4e" />
+<img width="503" height="603" alt="image" src="https://github.com/user-attachments/assets/5845f4dd-c5a8-47f1-81d8-0b7ea95d2aa0" />
 
 The PlayTag popup sets the **explosion delay**:
 
